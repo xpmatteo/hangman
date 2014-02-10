@@ -3,14 +3,12 @@ package it.xpug.hangman.main;
 
 import static org.apache.commons.io.IOUtils.*;
 import static org.junit.Assert.*;
+import it.xpug.generic.web.*;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import it.xpug.generic.web.*;
-
-import org.apache.commons.io.*;
 import org.apache.http.*;
 import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
@@ -23,7 +21,15 @@ public class HangmanEnd2EndTest {
 	public void rootUrl() throws Exception {
 		get("/");
 		assertStatus(200);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{\"index\":\"/\",\"prisoners\":\"/prisoners\",\"me\":\"/me\"}");
+	}
+
+	@Test
+	public void unauthenticatedMe() throws Exception {
+		get("/me");
 		assertBody("{}");
+		assertStatus(404);
 		assertMimeType("application/json; charset=UTF-8");
 	}
 
