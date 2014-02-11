@@ -1,20 +1,23 @@
 package it.xpug.hangman.main;
 
 
-import static org.apache.commons.io.IOUtils.*;
 import static org.junit.Assert.*;
 import it.xpug.generic.web.*;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.nio.charset.*;
 
 import org.apache.http.*;
 import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
+import org.apache.http.params.*;
+import org.eclipse.jetty.util.ajax.*;
 import org.junit.*;
 
+
+@SuppressWarnings("deprecation")
 public class HangmanEnd2EndTest {
 
 	@Test
@@ -33,13 +36,36 @@ public class HangmanEnd2EndTest {
 		assertMimeType("application/json; charset=UTF-8");
 	}
 
+	// other urls should return 404
+
+	@Test
+	public void createAUser() throws Exception {
+		nextUserId = "12345";
+		this.params.setParameter("name", "Pippo");
+		this.params.setParameter("password", "Pluto");
+		post("/me");
+		assertStatus(201);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{" +
+				" \"prisoners\": \"/prisoners\",\n" +
+				" \"id\": \"12345\",\n" +
+				" \"name\": \"Pippo\",\n" +
+				" \"url\": \"/users/12345\"\n" +
+				"}\n" +
+				"");
+	}
+
 	private void assertBody(String expectedBody) throws IllegalStateException, IOException {
-		List<String> body = readLines(response.getEntity().getContent());
-		assertEquals("Body", expectedBody, body.get(0));
+		byte[] bytes = new byte[10000];
+		response.getEntity().getContent().read(bytes);
+		String body = new String(bytes, Charset.forName("UTF-8"));
+		assertEquals("Body", JSON.parse(expectedBody), JSON.parse(body));
 	}
 
 	private void assertMimeType(String expectedMimeType) {
-		assertEquals("Mime type", expectedMimeType, response.getLastHeader("content-type").getValue());
+		Header contentType = response.getLastHeader("content-type");
+		assertNotNull("Mime type not set", contentType);
+		assertEquals("Mime type", expectedMimeType, contentType.getValue());
 	}
 
 	private void assertStatus(int expectedStatus) {
@@ -52,6 +78,14 @@ public class HangmanEnd2EndTest {
 		this.response = httpClient.execute(new HttpGet(url));
 	}
 
+	private void post(String path) throws URISyntaxException, ClientProtocolException, IOException {
+		URI url = new URI("http://localhost:" + APPLICATION_PORT + path);
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		HttpPost request = new HttpPost(url);
+		request.setParams(params);
+		this.response = httpClient.execute(request);
+	}
+
 	@BeforeClass
 	public static void startApplication() throws Exception {
 		app.start(APPLICATION_PORT, "../hangman-server/src/main/webapp");
@@ -62,8 +96,28 @@ public class HangmanEnd2EndTest {
 		app.shutdown();
 	}
 
-	private static final int APPLICATION_PORT = 8123;
-	protected static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet());
-	private HttpResponse response;
+	private static String nextUserId;
 
+	private static UserIdSequence userIdSequence = new UserIdSequence() {
+		@Override
+		public boolean hasNext() {
+			return nextUserId != null;
+		}
+		@Override
+		public String next() {
+			try {
+				return nextUserId;
+			} finally {
+				nextUserId = null;
+			}
+		}
+		@Override
+		public void remove() {
+		}
+	};
+
+	private static final int APPLICATION_PORT = 8123;
+	protected static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet(userIdSequence));
+	private HttpResponse response;
+	private HttpParams params = new BasicHttpParams();
 }
