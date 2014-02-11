@@ -10,7 +10,10 @@ import org.mortbay.util.ajax.*;
 
 public class HangmanServlet extends HttpServlet {
 
+	private UserIdSequence userIdSequence;
+
 	public HangmanServlet(UserIdSequence userIdSequence) {
+		this.userIdSequence = userIdSequence;
 	}
 
 	@Override
@@ -32,11 +35,12 @@ public class HangmanServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setContentType(response);
+		String newUserId = userIdSequence.next();
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		map.put("prisoners", "/prisoners");
-		map.put("id", "12345");
-		map.put("url", "/users/12345");
-		map.put("name", "Pippo");
+		map.put("id", newUserId);
+		map.put("url", "/users/" + newUserId);
+		map.put("name", request.getParameter("name"));
 		response.setStatus(HttpServletResponse.SC_CREATED);
 		response.getWriter().write(JSON.toString(map));
 	}

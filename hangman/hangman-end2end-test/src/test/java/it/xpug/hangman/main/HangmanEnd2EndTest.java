@@ -7,17 +7,18 @@ import it.xpug.generic.web.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
+import java.util.*;
 
 import org.apache.http.*;
 import org.apache.http.client.*;
+import org.apache.http.client.entity.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
-import org.apache.http.params.*;
+import org.apache.http.message.*;
 import org.eclipse.jetty.util.ajax.*;
 import org.junit.*;
 
 
-@SuppressWarnings("deprecation")
 public class HangmanEnd2EndTest {
 
 	@Test
@@ -41,8 +42,8 @@ public class HangmanEnd2EndTest {
 	@Test
 	public void createAUser() throws Exception {
 		nextUserId = "12345";
-		this.params.setParameter("name", "Pippo");
-		this.params.setParameter("password", "Pluto");
+		params.put("name", "Pippo");
+		params.put("password", "Pluto");
 		post("/me");
 		assertStatus(201);
 		assertMimeType("application/json; charset=UTF-8");
@@ -82,8 +83,17 @@ public class HangmanEnd2EndTest {
 		URI url = new URI("http://localhost:" + APPLICATION_PORT + path);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpPost request = new HttpPost(url);
-		request.setParams(params);
+		addParameters(request);
 		this.response = httpClient.execute(request);
+	}
+
+	private void addParameters(HttpPost request) throws UnsupportedEncodingException {
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		for (String name : params.keySet()) {
+			parameters.add(new BasicNameValuePair(name, params.get(name)));
+		}
+		HttpEntity entity = new UrlEncodedFormEntity(parameters);
+		request.setEntity(entity);
 	}
 
 	@BeforeClass
@@ -119,5 +129,5 @@ public class HangmanEnd2EndTest {
 	private static final int APPLICATION_PORT = 8123;
 	protected static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet(userIdSequence));
 	private HttpResponse response;
-	private HttpParams params = new BasicHttpParams();
+	private Map<String, String> params = new HashMap<String, String>();
 }
