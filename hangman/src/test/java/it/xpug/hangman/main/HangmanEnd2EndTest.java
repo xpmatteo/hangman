@@ -52,18 +52,15 @@ public class HangmanEnd2EndTest {
 	@Test
 	public void createAUser() throws Exception {
 		nextUserId = "12345";
+
 		params.put("name", "Pippo");
 		params.put("password", "Pluto");
-		post("/me");
-		assertStatus(201);
+		post("/users");
+
+		assertStatus(303);
 		assertMimeType("application/json; charset=UTF-8");
-		assertBody("{" +
-				" \"prisoners\": \"/prisoners\",\n" +
-				" \"id\": \"12345\",\n" +
-				" \"name\": \"Pippo\",\n" +
-				" \"url\": \"/users/12345\"\n" +
-				"}\n" +
-				"");
+		assertLocationHeader("http://localhost:8123/users/12345");
+		assertBody("{\"status_code\": 303, \"location\": \"/users/12345\", \"status\": \"See other\"}");
 	}
 
 	@Test
@@ -103,16 +100,26 @@ public class HangmanEnd2EndTest {
 		assertEquals("Mime type", expectedMimeType, contentType.getValue());
 	}
 
+	private void assertLocationHeader(String expectedLocation) {
+		Header location = response.getLastHeader("location");
+		assertNotNull("Location not set", location);
+		assertEquals("Location", expectedLocation, location.getValue());
+	}
+
 	private void assertStatus(int expectedStatus) {
 		assertEquals("Status code", expectedStatus, response.getStatusLine().getStatusCode());
 	}
 
 	private void get(String path) throws IOException, URISyntaxException {
-		URI url = new URI("http://localhost:" + APPLICATION_PORT + path + queryString());
+		URI url = new URI(baseUrl() + path + queryString());
 		System.out.println(url);
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
 		this.response = httpClient.execute(request);
+	}
+
+	private String baseUrl() {
+		return "http://localhost:" + APPLICATION_PORT;
 	}
 
 	private String queryString() {
@@ -128,8 +135,8 @@ public class HangmanEnd2EndTest {
 	}
 
 	private void post(String path) throws URISyntaxException, ClientProtocolException, IOException {
-		URI url = new URI("http://localhost:" + APPLICATION_PORT + path);
-		HttpClient httpClient = HttpClientBuilder.create().build();
+		URI url = new URI(baseUrl() + path);
+		HttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
 		HttpPost request = new HttpPost(url);
 		addParameters(request);
 		this.response = httpClient.execute(request);

@@ -1,5 +1,7 @@
 package it.xpug.hangman.main;
 
+import static java.lang.String.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -44,14 +46,20 @@ public class HangmanServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setContentType(response);
+
 		String newUserId = userIdSequence.next();
 		Map<Object, Object> map = new HashMap<Object, Object>();
-		map.put("prisoners", "/prisoners");
-		map.put("id", newUserId);
-		map.put("url", "/users/" + newUserId);
-		map.put("name", request.getParameter("name"));
-		response.setStatus(HttpServletResponse.SC_CREATED);
+		String path = "/users/" + newUserId;
+		map.put("location", path);
+		map.put("status", "See other");
+		map.put("status_code", HttpServletResponse.SC_SEE_OTHER);
+		response.setStatus(HttpServletResponse.SC_SEE_OTHER);
+		response.setHeader("Location", location(request, path));
 		response.getWriter().write(JSON.toString(map));
+	}
+
+	private String location(HttpServletRequest request, String path) {
+		return format("http://%s:%s%s", request.getServerName(), request.getLocalPort(), path);
 	}
 
 	private void setContentType(HttpServletResponse response) {
