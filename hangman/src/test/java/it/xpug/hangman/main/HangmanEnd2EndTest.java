@@ -83,11 +83,11 @@ public class HangmanEnd2EndTest {
 
 	@Test
 	public void wrongPassword() throws Exception {
-		givenUser("888", "Pippoz", "s3cr3t");
+		givenUser("123", "Pippoz", "s3cr3t");
 
 		params.put("name", "Pippoz");
 		params.put("password", "nottherightpassword");
-		get("/users/888");
+		get("/users/123");
 
 		assertStatus(403);
 		assertMimeType("application/json; charset=UTF-8");
