@@ -15,8 +15,8 @@ import org.apache.http.client.entity.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
 import org.apache.http.message.*;
-import org.eclipse.jetty.util.ajax.*;
 import org.junit.*;
+import org.mortbay.util.ajax.*;
 
 
 public class HangmanEnd2EndTest {
@@ -26,18 +26,28 @@ public class HangmanEnd2EndTest {
 		get("/");
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
-		assertBody("{\"index\":\"/\",\"prisoners\":\"/prisoners\",\"me\":\"/me\"}");
+		assertBody("{\"index\":\"/\",\"prisoners\":\"/prisoners\",\"users\":\"/users\"}");
 	}
 
 	@Test
-	public void unauthenticatedMe() throws Exception {
-		get("/me");
-		assertBody("{}");
-		assertStatus(404);
+	public void unauthenticatedUsers() throws Exception {
+		get("/users");
+		assertBody("{" +
+				"\"description\": \"Use POST on /users to create a user\",\n" +
+				"\"status\": \"Method not allowed\",\n" +
+				"\"status_code\": 405\n" +
+				"}");
+		assertStatus(405);
 		assertMimeType("application/json; charset=UTF-8");
 	}
 
+	// Successful Post on /users should return 303 See Other and location header
+
 	// other urls should return 404
+	// authenticated get to /me
+	// unauth get to /prisoners
+	// auth get to /prisoners
+	// create user invalid or missing data
 
 	@Test
 	public void createAUser() throws Exception {
@@ -54,6 +64,30 @@ public class HangmanEnd2EndTest {
 				" \"url\": \"/users/12345\"\n" +
 				"}\n" +
 				"");
+	}
+
+	@Test
+	public void seeMyself() throws Exception {
+		givenUser("888", "Pippoz", "s3cr3t");
+
+		params.put("name", "Pippoz");
+		params.put("password", "s3cr3t");
+		get("/users/888");
+
+		assertStatus(200);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{" +
+				" \"prisoners\": \"/prisoners\",\n" +
+				" \"id\": \"888\",\n" +
+				" \"name\": \"Pippoz\",\n" +
+				" \"url\": \"/users/888\"\n" +
+				"}\n" +
+				"");
+	}
+
+
+	private void givenUser(String userId, String name, String password) {
+		users.add(name, password, userId);
 	}
 
 	private void assertBody(String expectedBody) throws IllegalStateException, IOException {
@@ -74,9 +108,23 @@ public class HangmanEnd2EndTest {
 	}
 
 	private void get(String path) throws IOException, URISyntaxException {
-		URI url = new URI("http://localhost:" + APPLICATION_PORT + path);
+		URI url = new URI("http://localhost:" + APPLICATION_PORT + path + queryString());
+		System.out.println(url);
 		HttpClient httpClient = HttpClientBuilder.create().build();
-		this.response = httpClient.execute(new HttpGet(url));
+		HttpGet request = new HttpGet(url);
+		this.response = httpClient.execute(request);
+	}
+
+	private String queryString() {
+		String queryString = "";
+		for (String name : params.keySet()) {
+			if (!queryString.isEmpty())
+				queryString += "&";
+			queryString += name + "=" + params.get(name);
+		}
+		if (!queryString.isEmpty())
+			queryString = "?" + queryString;
+		return queryString;
 	}
 
 	private void post(String path) throws URISyntaxException, ClientProtocolException, IOException {
@@ -127,7 +175,8 @@ public class HangmanEnd2EndTest {
 	};
 
 	private static final int APPLICATION_PORT = 8123;
-	protected static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet(userIdSequence));
+	private static UserBase users = new UserBase();
+	private static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet(userIdSequence, users));
 	private HttpResponse response;
 	private Map<String, String> params = new HashMap<String, String>();
 }

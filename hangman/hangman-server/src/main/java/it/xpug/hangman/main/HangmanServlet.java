@@ -12,7 +12,7 @@ public class HangmanServlet extends HttpServlet {
 
 	private UserIdSequence userIdSequence;
 
-	public HangmanServlet(UserIdSequence userIdSequence) {
+	public HangmanServlet(UserIdSequence userIdSequence, UserBase users) {
 		this.userIdSequence = userIdSequence;
 	}
 
@@ -21,12 +21,21 @@ public class HangmanServlet extends HttpServlet {
 		setContentType(response);
 
 		Map<Object, Object> map = new HashMap<Object, Object>();
-		if (request.getRequestURI().equals("/")) {
-			map.put("me", "/me");
+		String requestURI = request.getRequestURI();
+		if (requestURI.equals("/")) {
+			map.put("users", "/users");
 			map.put("index", "/");
 			map.put("prisoners", "/prisoners");
-		} else {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		} else if (requestURI.equals("/users")) {
+			map.put("description", "Use POST on /users to create a user");
+			map.put("status", "Method not allowed");
+			map.put("status_code", 405);
+			response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+		} else if (requestURI.startsWith("/users/")) {
+			map.put("prisoners", "/prisoners");
+			map.put("id", "888");
+			map.put("url", "/users/" + "888");
+			map.put("name", request.getParameter("name"));
 		}
 
 		response.getWriter().write(JSON.toString(map));
