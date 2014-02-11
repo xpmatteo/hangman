@@ -41,10 +41,9 @@ public class HangmanEnd2EndTest {
 		assertMimeType("application/json; charset=UTF-8");
 	}
 
-	// Successful Post on /users should return 303 See Other and location header
-
 	// other urls should return 404
-	// authenticated get to /me
+	// authenticated get to /users/1234
+	// authenticated get to wrong /users/9999
 	// unauth get to /prisoners
 	// auth get to /prisoners
 	// create user invalid or missing data
@@ -82,6 +81,24 @@ public class HangmanEnd2EndTest {
 				"");
 	}
 
+	@Test
+	public void wrongPassword() throws Exception {
+		givenUser("888", "Pippoz", "s3cr3t");
+
+		params.put("name", "Pippoz");
+		params.put("password", "nottherightpassword");
+		get("/users/888");
+
+		assertStatus(403);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{\n" +
+				" \"description\": \"You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.\",\n" +
+				" \"status\": \"Forbidden\",\n" +
+				" \"status_code\": 403\n" +
+				"}");
+	}
+
+	// wrong userid
 
 	private void givenUser(String userId, String name, String password) {
 		users.add(name, password, userId);

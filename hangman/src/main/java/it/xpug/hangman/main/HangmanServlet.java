@@ -13,9 +13,11 @@ import org.mortbay.util.ajax.*;
 public class HangmanServlet extends HttpServlet {
 
 	private UserIdSequence userIdSequence;
+	private UserBase users;
 
 	public HangmanServlet(UserIdSequence userIdSequence, UserBase users) {
 		this.userIdSequence = userIdSequence;
+		this.users = users;
 	}
 
 	@Override
@@ -34,10 +36,7 @@ public class HangmanServlet extends HttpServlet {
 			map.put("status_code", 405);
 			response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		} else if (requestURI.startsWith("/users/")) {
-			map.put("prisoners", "/prisoners");
-			map.put("id", "888");
-			map.put("url", "/users/" + "888");
-			map.put("name", request.getParameter("name"));
+			handleGetUsers(request, map);
 		}
 
 		response.getWriter().write(JSON.toString(map));
@@ -46,7 +45,7 @@ public class HangmanServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setContentType(response);
-
+	
 		String newUserId = userIdSequence.next();
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		String path = "/users/" + newUserId;
@@ -56,6 +55,20 @@ public class HangmanServlet extends HttpServlet {
 		response.setStatus(HttpServletResponse.SC_SEE_OTHER);
 		response.setHeader("Location", location(request, path));
 		response.getWriter().write(JSON.toString(map));
+	}
+
+	private void handleGetUsers(HttpServletRequest request, Map<Object, Object> map) {
+		String userId = getUserId(request);
+		map.put("prisoners", "/prisoners");
+		map.put("id", userId);
+		map.put("url", "/users/" + userId);
+		map.put("name", request.getParameter("name"));
+	}
+
+	private String getUserId(HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		String userId = requestURI.substring(1+requestURI.lastIndexOf("/"));
+		return userId;
 	}
 
 	private String location(HttpServletRequest request, String path) {
