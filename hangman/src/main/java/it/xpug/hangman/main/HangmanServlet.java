@@ -19,18 +19,13 @@ public class HangmanServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		setContentType(response);
-		Map<Object, Object> map = new HashMap<Object, Object>();
-		new UserController(users).handleRequest(request, response, map);
-		response.getWriter().write(toJson(map));
+		JsonResponse jsonResponse = new JsonResponse(request, response);
+		new UserController(users).handleRequest(request, jsonResponse);
+		response.getWriter().write(toJson(jsonResponse));
 	}
 
 	private String toJson(Map<Object, Object> map) {
 		return JSON.toString(map).replaceAll("\",", "\",\n") + "\n";
 	}
 
-	private void setContentType(HttpServletResponse response) {
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-	}
 }
