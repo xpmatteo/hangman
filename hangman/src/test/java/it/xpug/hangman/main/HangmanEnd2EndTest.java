@@ -47,6 +47,8 @@ public class HangmanEnd2EndTest {
 	// unauth get to /prisoners
 	// auth get to /prisoners
 	// create user invalid or missing data
+	// wrong userid
+
 
 	@Test
 	public void createAUser() throws Exception {
@@ -96,7 +98,6 @@ public class HangmanEnd2EndTest {
 				"}");
 	}
 
-	// wrong userid
 
 	private void givenUser(String userId, String name, String password) {
 		users.add(name, password, userId);
@@ -127,10 +128,19 @@ public class HangmanEnd2EndTest {
 
 	private void get(String path) throws IOException, URISyntaxException {
 		URI url = new URI(baseUrl() + path + queryString());
-		System.out.println(url);
-		HttpClient httpClient = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
-		this.response = httpClient.execute(request);
+		this.response = makeHttpClient().execute(request);
+	}
+
+	private void post(String path) throws URISyntaxException, ClientProtocolException, IOException {
+		URI url = new URI(baseUrl() + path);
+		HttpPost request = new HttpPost(url);
+		addParameters(request);
+		this.response = makeHttpClient().execute(request);
+	}
+
+	private HttpClient makeHttpClient() {
+		return HttpClientBuilder.create().disableRedirectHandling().build();
 	}
 
 	private String baseUrl() {
@@ -149,21 +159,12 @@ public class HangmanEnd2EndTest {
 		return queryString;
 	}
 
-	private void post(String path) throws URISyntaxException, ClientProtocolException, IOException {
-		URI url = new URI(baseUrl() + path);
-		HttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
-		HttpPost request = new HttpPost(url);
-		addParameters(request);
-		this.response = httpClient.execute(request);
-	}
-
 	private void addParameters(HttpPost request) throws UnsupportedEncodingException {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		for (String name : params.keySet()) {
 			parameters.add(new BasicNameValuePair(name, params.get(name)));
 		}
-		HttpEntity entity = new UrlEncodedFormEntity(parameters);
-		request.setEntity(entity);
+		request.setEntity(new UrlEncodedFormEntity(parameters));
 	}
 
 	@BeforeClass

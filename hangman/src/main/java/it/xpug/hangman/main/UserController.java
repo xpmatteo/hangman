@@ -14,20 +14,46 @@ public class UserController {
 		this.users = users;
 	}
 
-	public void handleGet(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
-		String requestURI = request.getRequestURI();
-		if (requestURI.equals("/")) {
-			map.put("users", "/users");
-			map.put("index", "/");
-			map.put("prisoners", "/prisoners");
-		} else if (requestURI.equals("/users")) {
-			map.put("description", "Use POST on /users to create a user");
-			map.put("status", "Method not allowed");
-			map.put("status_code", 405);
-			response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-		} else if (requestURI.startsWith("/users/")) {
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
+		String uri = request.getRequestURI();
+		String method = request.getMethod().toLowerCase();
+		boolean isGet = method.equals("get");
+		boolean isPost = method.equals("post");
+
+		if (uri.equals("/") && isGet) {
+			index(map);
+		} else if (uri.equals("/users") && isGet) {
+			getUsersNotAllowed(response, map);
+		} else if (uri.startsWith("/users/") && isGet) {
 			handleGetUsers(request, response, map);
+		} else if (isPost) {
+			createNewUser(request, response, map);
 		}
+	}
+
+	private void getUsersNotAllowed(HttpServletResponse response, Map<Object, Object> map) {
+		map.put("description", "Use POST on /users to create a user");
+		map.put("status", "Method not allowed");
+		map.put("status_code", 405);
+		response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}
+
+	private void index(Map<Object, Object> map) {
+		map.put("users", "/users");
+		map.put("index", "/");
+		map.put("prisoners", "/prisoners");
+	}
+
+	private void createNewUser(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
+		String newUserId = users.getNextUserId();
+		String path = "/users/" + newUserId;
+		map.put("location", path);
+		map.put("status", "See other");
+		map.put("status_code", HttpServletResponse.SC_SEE_OTHER);
+		response.setStatus(HttpServletResponse.SC_SEE_OTHER);
+		response.setHeader("Location", location(request, path));
+
+		users.add("a name", request.getParameter("password"), newUserId);
 	}
 
 	private void handleGetUsers(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
@@ -54,22 +80,7 @@ public class UserController {
 		return requestURI.substring(1+requestURI.lastIndexOf("/"));
 	}
 
-	public void handlePost(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
-		String newUserId = users.getNextUserId();
-		String path = "/users/" + newUserId;
-		map.put("location", path);
-		map.put("status", "See other");
-		map.put("status_code", HttpServletResponse.SC_SEE_OTHER);
-		response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-		response.setHeader("Location", location(request, path));
-
-		users.add("a name", request.getParameter("password"), newUserId);
-	}
-
 	private String location(HttpServletRequest request, String path) {
 		return format("http://%s:%s%s", request.getServerName(), request.getLocalPort(), path);
 	}
-
-
-
 }

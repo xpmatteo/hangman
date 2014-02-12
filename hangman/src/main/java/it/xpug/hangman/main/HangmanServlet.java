@@ -18,20 +18,10 @@ public class HangmanServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setContentType(response);
 		Map<Object, Object> map = new HashMap<Object, Object>();
-		new UserController(users).handleGet(request, response, map);
-		response.getWriter().write(toJson(map));
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		setContentType(response);
-		Map<Object, Object> map = new HashMap<Object, Object>();
-
-		new UserController(users).handlePost(request, response, map);
-
+		new UserController(users).handleRequest(request, response, map);
 		response.getWriter().write(toJson(map));
 	}
 
