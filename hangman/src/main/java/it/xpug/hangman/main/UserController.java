@@ -9,11 +9,9 @@ import javax.servlet.http.*;
 public class UserController {
 
 	private UserBase users;
-	private UserIdSequence userIdSequence;
 
-	public UserController(UserBase users, UserIdSequence userIdSequence) {
+	public UserController(UserBase users) {
 		this.users = users;
-		this.userIdSequence = userIdSequence;
 	}
 
 	public void handleGet(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
@@ -53,12 +51,11 @@ public class UserController {
 
 	private String getUserId(HttpServletRequest request) {
 		String requestURI = request.getRequestURI();
-		String userId = requestURI.substring(1+requestURI.lastIndexOf("/"));
-		return userId;
+		return requestURI.substring(1+requestURI.lastIndexOf("/"));
 	}
 
 	public void handlePost(HttpServletRequest request, HttpServletResponse response, Map<Object, Object> map) {
-		String newUserId = userIdSequence.next();
+		String newUserId = users.getNextUserId();
 		String path = "/users/" + newUserId;
 		map.put("location", path);
 		map.put("status", "See other");

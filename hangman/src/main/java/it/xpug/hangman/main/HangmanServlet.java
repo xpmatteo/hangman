@@ -11,11 +11,9 @@ import org.mortbay.util.ajax.*;
 
 public class HangmanServlet extends HttpServlet {
 
-	private UserIdSequence userIdSequence;
 	private UserBase users;
 
-	public HangmanServlet(UserIdSequence userIdSequence, UserBase users) {
-		this.userIdSequence = userIdSequence;
+	public HangmanServlet(UserBase users) {
 		this.users = users;
 	}
 
@@ -23,7 +21,7 @@ public class HangmanServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setContentType(response);
 		Map<Object, Object> map = new HashMap<Object, Object>();
-		new UserController(users, userIdSequence).handleGet(request, response, map);
+		new UserController(users).handleGet(request, response, map);
 		response.getWriter().write(JSON.toString(map));
 	}
 
@@ -32,7 +30,7 @@ public class HangmanServlet extends HttpServlet {
 		setContentType(response);
 		Map<Object, Object> map = new HashMap<Object, Object>();
 
-		new UserController(users, userIdSequence).handlePost(request, response, map);
+		new UserController(users).handlePost(request, response, map);
 
 		response.getWriter().write(JSON.toString(map));
 	}

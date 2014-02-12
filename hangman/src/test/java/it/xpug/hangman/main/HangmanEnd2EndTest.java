@@ -50,16 +50,14 @@ public class HangmanEnd2EndTest {
 
 	@Test
 	public void createAUser() throws Exception {
-		nextUserId = "12345";
-
 		params.put("name", "Pippo");
 		params.put("password", "Pluto");
 		post("/users");
 
 		assertStatus(303);
 		assertMimeType("application/json; charset=UTF-8");
-		assertLocationHeader("http://localhost:8123/users/12345");
-		assertBody("{\"status_code\": 303, \"location\": \"/users/12345\", \"status\": \"See other\"}");
+		assertLocationHeader("http://localhost:8123/users/4cc2d9f6");
+		assertBody("{\"status_code\": 303, \"location\": \"/users/4cc2d9f6\", \"status\": \"See other\"}");
 	}
 
 	@Test
@@ -178,29 +176,9 @@ public class HangmanEnd2EndTest {
 		app.shutdown();
 	}
 
-	private static String nextUserId;
-
-	private static UserIdSequence userIdSequence = new UserIdSequence() {
-		@Override
-		public boolean hasNext() {
-			return nextUserId != null;
-		}
-		@Override
-		public String next() {
-			try {
-				return nextUserId;
-			} finally {
-				nextUserId = null;
-			}
-		}
-		@Override
-		public void remove() {
-		}
-	};
-
 	private static final int APPLICATION_PORT = 8123;
-	private static UserBase users = new UserBase();
-	private static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet(userIdSequence, users));
+	private static UserBase users = new UserBase(new Random(888));
+	private static ReusableJettyApp app = new ReusableJettyApp(new HangmanServlet(users));
 	private HttpResponse response;
 	private Map<String, String> params = new HashMap<String, String>();
 }
