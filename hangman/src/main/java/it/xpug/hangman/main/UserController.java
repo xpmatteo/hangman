@@ -36,7 +36,7 @@ public class UserController {
 	private void createNewUser(HttpServletRequest request, JsonResponse response) {
 		String newUserId = users.getNextUserId();
 		String path = "/users/" + newUserId;
-		response.respondWithRedirect(path);
+		response.redirect(path);
 
 		users.add("a name", request.getParameter("password"), newUserId);
 	}

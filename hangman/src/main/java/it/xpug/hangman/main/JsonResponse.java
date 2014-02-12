@@ -1,6 +1,7 @@
 package it.xpug.hangman.main;
 
 import static java.lang.String.*;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 
@@ -21,24 +22,24 @@ public class JsonResponse extends HashMap<Object, Object> {
 
 	public void methodNotAllowed(String description) {
 		put("description", description);
-		put("status", "Method not allowed");
-		put("status_code", 405);
-		httpServletResponse.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+		setStatus(SC_METHOD_NOT_ALLOWED, "Method not allowed");
 	}
 
-	public void respondWithRedirect(String path) {
-		put("status", "See other");
-		put("status_code", HttpServletResponse.SC_SEE_OTHER);
+	public void redirect(String path) {
 		put("location", path);
-		httpServletResponse.setStatus(HttpServletResponse.SC_SEE_OTHER);
 		httpServletResponse.setHeader("Location", makeAbsoluteUrl(path));
+		setStatus(SC_SEE_OTHER, "See other");
 	}
 
 	public void forbidden(String description) {
 		put("description", description);
-		put("status", "Forbidden");
-		put("status_code", HttpServletResponse.SC_FORBIDDEN);
-		httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		setStatus(SC_FORBIDDEN, "Forbidden");
+	}
+
+	private void setStatus(int statusCode, String statusDescription) {
+		put("status", statusDescription);
+		put("status_code", statusCode);
+		httpServletResponse.setStatus(statusCode);
 	}
 
 	private String makeAbsoluteUrl(String path) {
