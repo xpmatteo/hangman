@@ -22,7 +22,7 @@ public class HangmanServlet extends HttpServlet {
 		setContentType(response);
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		new UserController(users).handleGet(request, response, map);
-		response.getWriter().write(JSON.toString(map));
+		response.getWriter().write(toJson(map));
 	}
 
 	@Override
@@ -32,7 +32,11 @@ public class HangmanServlet extends HttpServlet {
 
 		new UserController(users).handlePost(request, response, map);
 
-		response.getWriter().write(JSON.toString(map));
+		response.getWriter().write(toJson(map));
+	}
+
+	private String toJson(Map<Object, Object> map) {
+		return JSON.toString(map).replaceAll("\",", "\",\n") + "\n";
 	}
 
 	private void setContentType(HttpServletResponse response) {
