@@ -38,11 +38,11 @@ public class UserController {
 		String path = "/users/" + newUserId;
 		response.redirect(path);
 
-		users.add("a name", request.getParameter("password"), newUserId);
+		users.add("a name", request.getParameter("password"), new UserId(newUserId));
 	}
 
 	private void handleGetUsers(HttpServletRequest request, JsonResponse response) {
-		String userId = getUserId(request);
+		UserId userId = getUserId(request);
 		if (!users.contains(userId, request.getParameter("password"))) {
 			response.forbidden("You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.");
 			return;
@@ -53,8 +53,9 @@ public class UserController {
 		response.put("name", request.getParameter("name"));
 	}
 
-	private String getUserId(HttpServletRequest request) {
-		String requestURI = request.getRequestURI();
-		return requestURI.substring(1+requestURI.lastIndexOf("/"));
+	private UserId getUserId(HttpServletRequest request) {
+		String uri = request.getRequestURI();
+		String string = uri.substring(1+uri.lastIndexOf("/"));
+		return new UserId(string);
 	}
 }

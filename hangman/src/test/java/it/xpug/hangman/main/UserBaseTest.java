@@ -20,9 +20,9 @@ public class UserBaseTest {
 	@Test
 	public void authenticateUsers() throws Exception {
 		UserBase userBase = new UserBase();
-		userBase.add("pippo", "secret", "123");
-		assertEquals("authenticates", true, userBase.contains("123", "secret"));
-		assertEquals("wrong password", false, userBase.contains("123", "zot"));
-		assertEquals("non-existing user", false, userBase.contains("999", "secret"));
+		userBase.add("pippo", "secret", new UserId("123"));
+		assertEquals("authenticates", true, userBase.contains(new UserId("123"), "secret"));
+		assertEquals("wrong password", false, userBase.contains(new UserId("123"), "zot"));
+		assertEquals("non-existing user", false, userBase.contains(new UserId("999"), "secret"));
 	}
 }
