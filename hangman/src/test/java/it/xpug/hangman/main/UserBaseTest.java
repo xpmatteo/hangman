@@ -16,4 +16,13 @@ public class UserBaseTest {
 		assertEquals("46de0e23", userBase.getNextUserId());
 		assertEquals("3cbc0495", userBase.getNextUserId());
 	}
+
+	@Test
+	public void authenticateUsers() throws Exception {
+		UserBase userBase = new UserBase();
+		userBase.add("pippo", "secret", "123");
+		assertEquals("authenticates", true, userBase.contains("123", "secret"));
+		assertEquals("wrong password", false, userBase.contains("123", "zot"));
+		assertEquals("non-existing user", false, userBase.contains("999", "secret"));
+	}
 }
