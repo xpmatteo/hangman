@@ -66,4 +66,19 @@ public class UserControllerTest {
 		assertTrue("user created", users.contains(new UserId("3cb54a30"), "secr3t"));
 	}
 
+	@Test
+	public void returnListOfPrisoners() throws Exception {
+		final UserId userId = new UserId("1234");
+		users.add(userId, "name", "s3cret");
+		context.checking(new Expectations() {{
+			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners"));
+			allowing(request).getMethod(); will(returnValue("get"));
+			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
+			allowing(request).getUserId(); will(returnValue(userId));
+			oneOf(response).put("items", new ArrayList<Prisoner>());
+			oneOf(response).put("url", "/users/1234/prisoners");
+		}});
+		controller.handleRequest(request, response);
+	}
+
 }

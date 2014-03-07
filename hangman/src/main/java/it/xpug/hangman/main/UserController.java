@@ -1,6 +1,6 @@
 package it.xpug.hangman.main;
 
-import java.util.regex.*;
+import java.util.*;
 
 
 public class UserController {
@@ -21,7 +21,7 @@ public class UserController {
 			index(response);
 		} else if (uri.equals("/users") && isGet) {
 			response.methodNotAllowed("Use POST on /users to create a user");
-		} else if (uri.matches("^/users/\\d+/prisoners") && isGet) {
+		} else if (uri.matches("^/users/[a-f0-9]+/prisoners") && isGet) {
 			getPrisoners(request, response);
 		} else if (uri.startsWith("/users/") && isGet) {
 			getUsers(request, response);
@@ -33,6 +33,7 @@ public class UserController {
 	private void getPrisoners(WebRequest request, WebResponse response) {
 		UserId userId = request.getUserId();
 		response.put("url", "/users/" + userId + "/prisoners");
+		response.put("items", new ArrayList<Prisoner>());
 	}
 
 	private void index(WebResponse response) {
