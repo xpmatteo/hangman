@@ -52,10 +52,9 @@ public class UserController {
 			response.forbidden("You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.");
 			return;
 		}
-		response.put("prisoners", "/prisoners");
+		response.put("prisoners", "/users/" + userId + "/prisoners");
 		response.put("id", userId);
 		response.put("url", "/users/" + userId);
-		response.put("name", request.getParameter("name"));
 	}
 
 	private UserId getUserId(WebRequest request) {

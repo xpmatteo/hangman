@@ -77,9 +77,8 @@ public class HangmanEnd2EndTest {
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
 		assertBody("{" +
-				" \"prisoners\": \"/prisoners\",\n" +
+				" \"prisoners\": \"/users/888/prisoners\",\n" +
 				" \"id\": \"888\",\n" +
-				" \"name\": \"Pippoz\",\n" +
 				" \"url\": \"/users/888\"\n" +
 				"}\n" +
 				"");
