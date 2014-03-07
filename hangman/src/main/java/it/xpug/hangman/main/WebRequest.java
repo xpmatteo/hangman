@@ -8,4 +8,6 @@ public interface WebRequest {
 
 	String getParameter(String name);
 
+	UserId getUserId();
+
 }

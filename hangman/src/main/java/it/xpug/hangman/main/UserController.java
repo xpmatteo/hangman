@@ -31,7 +31,7 @@ public class UserController {
 	}
 
 	private void getPrisoners(WebRequest request, WebResponse response) {
-		UserId userId = getUserId(request);
+		UserId userId = request.getUserId();
 		response.put("url", "/users/" + userId + "/prisoners");
 	}
 
@@ -55,7 +55,7 @@ public class UserController {
 	}
 
 	private void getUsers(WebRequest request, WebResponse response) {
-		UserId userId = getUserId(request);
+		UserId userId = request.getUserId();
 		if (!users.contains(userId, request.getParameter("password"))) {
 			response.forbidden("You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.");
 			return;
@@ -63,11 +63,5 @@ public class UserController {
 		response.put("prisoners", "/users/" + userId + "/prisoners");
 		response.put("id", userId);
 		response.put("url", "/users/" + userId);
-	}
-
-	private UserId getUserId(WebRequest request) {
-		Matcher matcher = Pattern.compile("/users/(\\d+)").matcher(request.getRequestURI());
-		matcher.find();
-		return new UserId(matcher.group(1));
 	}
 }

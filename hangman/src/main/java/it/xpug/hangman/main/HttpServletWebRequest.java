@@ -1,5 +1,7 @@
 package it.xpug.hangman.main;
 
+import java.util.regex.*;
+
 import javax.servlet.http.*;
 
 public class HttpServletWebRequest implements WebRequest {
@@ -24,5 +26,13 @@ public class HttpServletWebRequest implements WebRequest {
 	public String getParameter(String name) {
 		return request.getParameter(name);
 	}
+
+	@Override
+	public UserId getUserId() {
+		Matcher matcher = Pattern.compile("/users/([a-f0-9]+)").matcher(getRequestURI());
+		matcher.find();
+		return new UserId(matcher.group(1));
+	}
+
 
 }

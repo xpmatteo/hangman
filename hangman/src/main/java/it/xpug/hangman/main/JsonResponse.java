@@ -69,4 +69,5 @@ public class JsonResponse implements WebResponse {
 		int localPort = httpServletRequest.getLocalPort();
 		return format("http://%s:%s%s", serverName, localPort, path);
 	}
+
 }
