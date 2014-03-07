@@ -100,7 +100,7 @@ public class HangmanEnd2EndTest {
 
 
 	private void givenUser(String userId, String name, String password) {
-		users.add(name, password, new UserId(userId));
+		users.add(new UserId(userId), name, password);
 	}
 
 	private void assertBody(String expectedBody) throws IllegalStateException, IOException {

@@ -1,6 +1,5 @@
 package it.xpug.hangman.main;
 
-import javax.servlet.http.*;
 
 public class UserController {
 
@@ -10,7 +9,7 @@ public class UserController {
 		this.users = users;
 	}
 
-	public void handleRequest(HttpServletRequest request, JsonResponse response) {
+	public void handleRequest(WebRequest request, WebResponse response) {
 		String uri = request.getRequestURI();
 		String method = request.getMethod().toLowerCase();
 		boolean isGet = method.equals("get");
@@ -21,27 +20,33 @@ public class UserController {
 		} else if (uri.equals("/users") && isGet) {
 			response.methodNotAllowed("Use POST on /users to create a user");
 		} else if (uri.startsWith("/users/") && isGet) {
-			handleGetUsers(request, response);
+			getUsers(request, response);
 		} else if (isPost) {
 			createNewUser(request, response);
 		}
 	}
 
-	private void index(JsonResponse response) {
+	private void index(WebResponse response) {
 		response.put("users", "/users");
 		response.put("index", "/");
 		response.put("prisoners", "/prisoners");
 	}
 
-	private void createNewUser(HttpServletRequest request, JsonResponse response) {
+	private void createNewUser(WebRequest request, WebResponse response) {
 		String newUserId = users.getNextUserId();
 		String path = "/users/" + newUserId;
-		response.redirect(path);
 
-		users.add("a name", request.getParameter("password"), new UserId(newUserId));
+		if (null == request.getParameter("name")) {
+			response.validationError("Parameter \"name\" is required");
+		} else if (null == request.getParameter("password")) {
+			response.validationError("Parameter \"password\" is required");
+		} else {
+			response.redirect(path);
+			users.add(new UserId(newUserId), "a name", request.getParameter("password"));
+		}
 	}
 
-	private void handleGetUsers(HttpServletRequest request, JsonResponse response) {
+	private void getUsers(WebRequest request, WebResponse response) {
 		UserId userId = getUserId(request);
 		if (!users.contains(userId, request.getParameter("password"))) {
 			response.forbidden("You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.");
@@ -53,7 +58,7 @@ public class UserController {
 		response.put("name", request.getParameter("name"));
 	}
 
-	private UserId getUserId(HttpServletRequest request) {
+	private UserId getUserId(WebRequest request) {
 		String uri = request.getRequestURI();
 		String string = uri.substring(1+uri.lastIndexOf("/"));
 		return new UserId(string);

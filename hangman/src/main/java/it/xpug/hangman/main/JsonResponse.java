@@ -7,10 +7,13 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
-public class JsonResponse extends HashMap<Object, Object> {
+import org.mortbay.util.ajax.*;
+
+public class JsonResponse implements WebResponse {
 
 	private HttpServletResponse httpServletResponse;
 	private HttpServletRequest httpServletRequest;
+	private Map<String, Object> objects = new HashMap<>();
 
 	public JsonResponse(HttpServletRequest request, HttpServletResponse response) {
 		this.httpServletRequest = request;
@@ -20,25 +23,28 @@ public class JsonResponse extends HashMap<Object, Object> {
 		response.setCharacterEncoding("UTF-8");
 	}
 
+	@Override
 	public void methodNotAllowed(String description) {
-		put("description", description);
+		objects.put("description", description);
 		setStatus(SC_METHOD_NOT_ALLOWED, "Method not allowed");
 	}
 
+	@Override
 	public void redirect(String path) {
-		put("location", path);
+		objects.put("location", path);
 		httpServletResponse.setHeader("Location", makeAbsoluteUrl(path));
 		setStatus(SC_SEE_OTHER, "See other");
 	}
 
+	@Override
 	public void forbidden(String description) {
-		put("description", description);
+		objects.put("description", description);
 		setStatus(SC_FORBIDDEN, "Forbidden");
 	}
 
 	private void setStatus(int statusCode, String statusDescription) {
-		put("status", statusDescription);
-		put("status_code", statusCode);
+		objects.put("status", statusDescription);
+		objects.put("status_code", statusCode);
 		httpServletResponse.setStatus(statusCode);
 	}
 
@@ -46,5 +52,19 @@ public class JsonResponse extends HashMap<Object, Object> {
 		String serverName = httpServletRequest.getServerName();
 		int localPort = httpServletRequest.getLocalPort();
 		return format("http://%s:%s%s", serverName, localPort, path);
+	}
+
+	@Override
+	public void put(String name, Object value) {
+		objects.put(name, value);
+	}
+
+	@Override
+	public String toString() {
+		return JSON.toString(objects).replaceAll("\",", "\",\n") + "\n";
+	}
+
+	@Override
+	public void validationError(String message) {
 	}
 }

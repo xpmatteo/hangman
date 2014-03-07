@@ -4,10 +4,8 @@ import java.util.*;
 
 public class UserBase {
 
-	List<User> users = new ArrayList<>();
-	private String password;
+	private List<User> users = new ArrayList<>();
 	private Random random;
-	private UserId userId;
 
 	public UserBase(Random random) {
 		this.random = random;
@@ -17,13 +15,17 @@ public class UserBase {
 		this(new Random());
 	}
 
-	public void add(String name, String password, UserId userId) {
-		this.password = password;
-		this.userId = userId;
+	public void add(UserId userId, String name, String password) {
+		this.users.add(new User(userId, name, password));
 	}
 
 	public boolean contains(UserId userId, String password) {
-		return this.password.equals(password) && this.userId.equals(userId);
+		for (User user : users) {
+			if (user.authenticates(userId, password)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getNextUserId() {

@@ -2,12 +2,9 @@ package it.xpug.hangman.main;
 
 
 import java.io.*;
-import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-
-import org.mortbay.util.ajax.*;
 
 public class HangmanServlet extends HttpServlet {
 
@@ -19,13 +16,11 @@ public class HangmanServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JsonResponse jsonResponse = new JsonResponse(request, response);
-		new UserController(users).handleRequest(request, jsonResponse);
-		response.getWriter().write(toJson(jsonResponse));
+		WebResponse jsonResponse = new JsonResponse(request, response);
+		WebRequest webRequest = new HttpServletWebRequest(request);
+		new UserController(users).handleRequest(webRequest, jsonResponse);
+		response.getWriter().write(jsonResponse.toString());
 	}
 
-	private String toJson(Map<Object, Object> map) {
-		return JSON.toString(map).replaceAll("\",", "\",\n") + "\n";
-	}
 
 }
