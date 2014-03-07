@@ -28,7 +28,7 @@ public class UserControllerTest {
 			allowing(request).getRequestURI(); will(returnValue("http://whatever/users"));
 			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with(any(String.class))); will(returnValue(null));
-			oneOf(response).validationError("Parameter \"name\" is required");
+			oneOf(response).validationError("Parameter 'name' is required");
 		}});
 
 		controller.handleRequest(request, response);
@@ -44,7 +44,7 @@ public class UserControllerTest {
 			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("name")); will(returnValue("gino"));
 			allowing(request).getParameter(with(any(String.class))); will(returnValue(null));
-			oneOf(response).validationError("Parameter \"password\" is required");
+			oneOf(response).validationError("Parameter 'password' is required");
 		}});
 
 		controller.handleRequest(request, response);

@@ -37,9 +37,9 @@ public class UserController {
 		String path = "/users/" + newUserId;
 
 		if (null == request.getParameter("name")) {
-			response.validationError("Parameter \"name\" is required");
+			response.validationError("Parameter 'name' is required");
 		} else if (null == request.getParameter("password")) {
-			response.validationError("Parameter \"password\" is required");
+			response.validationError("Parameter 'password' is required");
 		} else {
 			response.redirect(path);
 			users.add(new UserId(newUserId), "a name", request.getParameter("password"));

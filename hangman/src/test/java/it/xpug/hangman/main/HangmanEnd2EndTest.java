@@ -41,15 +41,6 @@ public class HangmanEnd2EndTest {
 		assertMimeType("application/json; charset=UTF-8");
 	}
 
-	// other urls should return 404
-	// authenticated get to /users/1234
-	// authenticated get to wrong /users/9999
-	// unauth get to /prisoners
-	// auth get to /prisoners
-	// create user invalid or missing data
-	// wrong userid
-
-
 	@Test
 	public void createAUser() throws Exception {
 		params.put("name", "Pippo");
@@ -60,6 +51,19 @@ public class HangmanEnd2EndTest {
 		assertMimeType("application/json; charset=UTF-8");
 		assertLocationHeader("http://localhost:8123/users/4cc2d9f6");
 		assertBody("{\"status_code\": 303, \"location\": \"/users/4cc2d9f6\", \"status\": \"See other\"}");
+	}
+
+	@Test
+	public void validationErrorOnUserCreation() throws Exception {
+		post("/users");
+
+		assertStatus(400);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{"
+				+ "\"status_code\": 400, "
+				+ "\"status\": \"Bad Request\", "
+				+ "\"description\": \"Parameter 'name' is required\","
+				+ "}");
 	}
 
 	@Test

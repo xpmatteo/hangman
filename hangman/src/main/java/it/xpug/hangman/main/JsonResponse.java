@@ -42,18 +42,6 @@ public class JsonResponse implements WebResponse {
 		setStatus(SC_FORBIDDEN, "Forbidden");
 	}
 
-	private void setStatus(int statusCode, String statusDescription) {
-		objects.put("status", statusDescription);
-		objects.put("status_code", statusCode);
-		httpServletResponse.setStatus(statusCode);
-	}
-
-	private String makeAbsoluteUrl(String path) {
-		String serverName = httpServletRequest.getServerName();
-		int localPort = httpServletRequest.getLocalPort();
-		return format("http://%s:%s%s", serverName, localPort, path);
-	}
-
 	@Override
 	public void put(String name, Object value) {
 		objects.put(name, value);
@@ -66,5 +54,19 @@ public class JsonResponse implements WebResponse {
 
 	@Override
 	public void validationError(String message) {
+		setStatus(400, "Bad Request");
+		objects.put("description", message);
+	}
+
+	private void setStatus(int statusCode, String statusDescription) {
+		objects.put("status", statusDescription);
+		objects.put("status_code", statusCode);
+		httpServletResponse.setStatus(statusCode);
+	}
+
+	private String makeAbsoluteUrl(String path) {
+		String serverName = httpServletRequest.getServerName();
+		int localPort = httpServletRequest.getLocalPort();
+		return format("http://%s:%s%s", serverName, localPort, path);
 	}
 }
