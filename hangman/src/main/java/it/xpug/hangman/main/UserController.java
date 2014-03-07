@@ -29,7 +29,6 @@ public class UserController {
 	private void index(WebResponse response) {
 		response.put("users", "/users");
 		response.put("index", "/");
-		response.put("prisoners", "/prisoners");
 	}
 
 	private void createNewUser(WebRequest request, WebResponse response) {

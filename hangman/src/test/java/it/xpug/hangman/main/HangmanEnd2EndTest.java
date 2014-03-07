@@ -26,7 +26,7 @@ public class HangmanEnd2EndTest {
 		get("/");
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
-		assertBody("{\"index\":\"/\",\"prisoners\":\"/prisoners\",\"users\":\"/users\"}");
+		assertBody("{\"index\":\"/\",\"users\":\"/users\"}");
 	}
 
 	@Test
