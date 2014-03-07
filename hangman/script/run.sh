@@ -2,4 +2,8 @@
 set -e
 cd "$(dirname $0)/.."
 
-mvn compile exec:java -Dexec.mainClass="it.xpug.hangman.main.Main"
+if [ ! -d target/dependency ]; then
+	mvn package
+fi
+
+java -cp target/classes:"target/dependency/*" it.xpug.hangman.main.Main
