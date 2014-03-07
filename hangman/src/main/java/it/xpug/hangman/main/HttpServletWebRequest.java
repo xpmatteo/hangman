@@ -34,5 +34,12 @@ public class HttpServletWebRequest implements WebRequest {
 		return new UserId(matcher.group(1));
 	}
 
+	@Override
+	public String getPrisonerId() {
+		Matcher matcher = Pattern.compile("/users/([a-f0-9]+)/prisoners/([a-f0-9]+)").matcher(getRequestURI());
+		matcher.find();
+		return matcher.group(2);
+	}
+
 
 }

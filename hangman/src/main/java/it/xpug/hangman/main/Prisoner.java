@@ -10,12 +10,14 @@ public class Prisoner implements JSON.Generator {
 	private int guessesRemaining = 18;
 	private Set<String> misses = new HashSet<String>();
 	private Set<String> hits = new HashSet<String>();
+	private String id;
 
 	public Prisoner(String id) {
 		this(id, new RandomWord().getAnother());
 	}
 
 	public Prisoner(String id, String word) {
+		this.id = id;
 		this.word = word;
 	}
 
@@ -67,4 +69,16 @@ public class Prisoner implements JSON.Generator {
 		}
 	}
 
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public String toString() {
+		return "Prisoner " + id;
+	}
+
+	public int getGuessesRemaining() {
+		return guessesRemaining;
+	}
 }

@@ -10,4 +10,6 @@ public interface WebRequest {
 
 	UserId getUserId();
 
+	String getPrisonerId();
+
 }

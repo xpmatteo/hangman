@@ -1,6 +1,7 @@
 package it.xpug.hangman.main;
 
 
+import static java.util.Arrays.*;
 import static org.junit.Assert.*;
 
 import java.util.*;
@@ -49,6 +50,7 @@ public class UserBaseTest {
 		Prisoner prisoner = new Prisoner("zzz", "abc");
 		userBase.addPrisoner(userId, prisoner);
 
-		assertEquals(Arrays.asList(prisoner), userBase.findPrisoners(userId));
+		assertEquals(asList(prisoner), userBase.findPrisoners(userId));
+		assertEquals(prisoner, userBase.findPrisoner(userId, "zzz"));
 	}
 }

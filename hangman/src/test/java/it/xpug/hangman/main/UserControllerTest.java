@@ -97,4 +97,63 @@ public class UserControllerTest {
 		assertEquals(1, users.findPrisoners(userId).size());
 	}
 
+	@Test
+	public void guess() throws Exception {
+		final UserId userId = new UserId("1234");
+		users.add(userId, "name", "s3cret");
+		users.addPrisoner(userId, new Prisoner("abc123", "word"));
+
+		context.checking(new Expectations() {{
+			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners/abc123"));
+			allowing(request).getMethod(); will(returnValue("post"));
+			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
+			allowing(request).getParameter(with("guess")); will(returnValue("x"));
+			allowing(request).getUserId(); will(returnValue(userId));
+			allowing(request).getPrisonerId(); will(returnValue("abc123"));
+			oneOf(response).redirect("/users/1234/prisoners/abc123");
+		}});
+		controller.handleRequest(request, response);
+
+		assertEquals(17, users.findPrisoner(userId, "abc123").getGuessesRemaining());
+	}
+
+	@Test
+	public void guessValidation() throws Exception {
+		final UserId userId = new UserId("1234");
+		users.add(userId, "name", "s3cret");
+		users.addPrisoner(userId, new Prisoner("abc123", "word"));
+
+		context.checking(new Expectations() {{
+			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners/abc123"));
+			allowing(request).getMethod(); will(returnValue("post"));
+			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
+			allowing(request).getParameter(with("guess")); will(returnValue(null));
+			allowing(request).getUserId(); will(returnValue(userId));
+			oneOf(response).validationError("Parameter 'guess' is required");
+		}});
+		controller.handleRequest(request, response);
+
+		assertEquals(18, users.findPrisoner(userId, "abc123").getGuessesRemaining());
+	}
+
+	@Test
+	public void guessForbidden() throws Exception {
+		final UserId userId = new UserId("1234");
+		users.add(userId, "name", "s3cret");
+		users.addPrisoner(userId, new Prisoner("abc123", "word"));
+
+		context.checking(new Expectations() {{
+			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners/abc123"));
+			allowing(request).getMethod(); will(returnValue("post"));
+			allowing(request).getParameter(with("password")); will(returnValue(null));
+			allowing(request).getParameter(with("guess")); will(returnValue("x"));
+			allowing(request).getUserId(); will(returnValue(userId));
+			allowing(request).getPrisonerId(); will(returnValue("abc123"));
+			oneOf(response).forbidden(with(any(String.class)));
+		}});
+		controller.handleRequest(request, response);
+
+		assertEquals(18, users.findPrisoner(userId, "abc123").getGuessesRemaining());
+	}
+
 }

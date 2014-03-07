@@ -16,10 +16,21 @@ public class UserController {
 		boolean isGet = method.equals("get");
 		boolean isPost = method.equals("post");
 
+		if (uri.matches("^/users/[a-f0-9]+.*")) {
+			if (!users.contains(request.getUserId(), request.getParameter("password"))) {
+				forbidden(response);
+				return;
+			}
+		}
+
 		if (uri.equals("/") && isGet) {
 			index(response);
 		} else if (uri.equals("/users") && isGet) {
 			response.methodNotAllowed("Use POST on /users to create a user");
+		} else if (uri.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+") && isGet) {
+			getOnePrisoner(request, response);
+		} else if (uri.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+")) {
+			guess(request, response);
 		} else if (uri.matches("^/users/[a-f0-9]+/prisoners") && isGet) {
 			getPrisoners(request, response);
 		} else if (uri.matches("^/users/[a-f0-9]+/prisoners")) {
@@ -29,6 +40,25 @@ public class UserController {
 		} else if (isPost) {
 			createNewUser(request, response);
 		}
+	}
+
+	private void guess(WebRequest request, WebResponse response) {
+		if (null == request.getParameter("guess")) {
+			response.validationError("Parameter 'guess' is required");
+			return;
+		}
+		UserId userId = request.getUserId();
+		String prisonerId = request.getPrisonerId();
+		Prisoner prisoner = users.findPrisoner(userId, prisonerId);
+		prisoner.guess(request.getParameter("guess"));
+		response.redirect(request.getRequestURI());
+	}
+
+	private void getOnePrisoner(WebRequest request, WebResponse response) {
+		UserId userId = request.getUserId();
+		String prisonerId = request.getPrisonerId();
+		response.put("url", "/users/" + userId + "/prisoners/" + prisonerId);
+		response.put("prisoner", users.findPrisoner(userId, prisonerId));
 	}
 
 	private void getPrisoners(WebRequest request, WebResponse response) {
@@ -60,20 +90,12 @@ public class UserController {
 		String prisonerId = users.getNextUserId();
 		String path = request.getRequestURI() + "/" + prisonerId;
 
-		if (null == request.getParameter("password")) {
-			forbidden(response);
-		} else {
-			response.redirect(path);
-			users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, "pippo"));
-		}
+		response.redirect(path);
+		users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, new RandomWord().getAnother()));
 	}
 
 	private void getUsers(WebRequest request, WebResponse response) {
 		UserId userId = request.getUserId();
-		if (!users.contains(userId, request.getParameter("password"))) {
-			forbidden(response);
-			return;
-		}
 		response.put("prisoners", "/users/" + userId + "/prisoners");
 		response.put("id", userId);
 		response.put("url", "/users/" + userId);

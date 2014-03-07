@@ -51,4 +51,13 @@ public class UserBase {
 		return prisoners.get(userId);
 	}
 
+	public Prisoner findPrisoner(UserId userId, String prisonerId) {
+		for (Prisoner prisoner : findPrisoners(userId)) {
+			if (prisoner.getId().equals(prisonerId)) {
+				return prisoner;
+			}
+		}
+		return null;
+	}
+
 }
