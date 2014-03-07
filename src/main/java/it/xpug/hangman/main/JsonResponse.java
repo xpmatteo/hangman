@@ -7,6 +7,7 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.json.*;
 import org.mortbay.util.ajax.*;
 
 public class JsonResponse implements WebResponse {
@@ -49,7 +50,8 @@ public class JsonResponse implements WebResponse {
 
 	@Override
 	public String toString() {
-		return JSON.toString(objects).replaceAll("\",", "\",\n") + "\n";
+		String string = JSON.toString(objects);
+		return new JSONObject(string).toString(2);
 	}
 
 	@Override
