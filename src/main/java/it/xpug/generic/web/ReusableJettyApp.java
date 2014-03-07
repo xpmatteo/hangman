@@ -54,7 +54,7 @@ public class ReusableJettyApp {
 			setResourceBase(resourceBase);
 	        setWelcomeFiles(new String[]{ "index.html" });
 		}
-	
+
 		@Override
 		public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException, ServletException {
 			if (request.getPathInfo().equals("/") && !welcomeExists()) {
@@ -63,7 +63,7 @@ public class ReusableJettyApp {
 				super.handle(target, request, response, dispatch);
 			}
 		}
-	
+
 		private boolean welcomeExists() throws IOException {
 			return this.getBaseResource().addPath("/index.html").exists();
 		}
