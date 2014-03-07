@@ -49,7 +49,7 @@ public class HangmanEnd2EndTest {
 
 		assertStatus(303);
 		assertMimeType("application/json; charset=UTF-8");
-		assertLocationHeader("http://localhost:8123/users/4cc2d9f6");
+		assertLocationHeader("/users/4cc2d9f6");
 		assertBody("{\"status_code\": 303, \"location\": \"/users/4cc2d9f6\", \"status\": \"See other\"}");
 	}
 

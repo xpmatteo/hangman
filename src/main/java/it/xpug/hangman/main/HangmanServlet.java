@@ -16,7 +16,7 @@ public class HangmanServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		WebResponse jsonResponse = new JsonResponse(request, response);
+		WebResponse jsonResponse = new JsonResponse(response);
 		WebRequest webRequest = new HttpServletWebRequest(request);
 		new UserController(users).handleRequest(webRequest, jsonResponse);
 		response.getWriter().write(jsonResponse.toString());

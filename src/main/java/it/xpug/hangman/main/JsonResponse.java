@@ -1,6 +1,5 @@
 package it.xpug.hangman.main;
 
-import static java.lang.String.*;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
@@ -13,11 +12,9 @@ import org.mortbay.util.ajax.*;
 public class JsonResponse implements WebResponse {
 
 	private HttpServletResponse httpServletResponse;
-	private HttpServletRequest httpServletRequest;
 	private Map<String, Object> objects = new HashMap<>();
 
-	public JsonResponse(HttpServletRequest request, HttpServletResponse response) {
-		this.httpServletRequest = request;
+	public JsonResponse(HttpServletResponse response) {
 		this.httpServletResponse = response;
 
 		response.setContentType("application/json");
@@ -33,7 +30,7 @@ public class JsonResponse implements WebResponse {
 	@Override
 	public void redirect(String path) {
 		objects.put("location", path);
-		httpServletResponse.setHeader("Location", makeAbsoluteUrl(path));
+		httpServletResponse.setHeader("Location", path);
 		setStatus(SC_SEE_OTHER, "See other");
 	}
 
@@ -65,11 +62,4 @@ public class JsonResponse implements WebResponse {
 		objects.put("status_code", statusCode);
 		httpServletResponse.setStatus(statusCode);
 	}
-
-	private String makeAbsoluteUrl(String path) {
-		String serverName = httpServletRequest.getServerName();
-		int localPort = httpServletRequest.getLocalPort();
-		return format("http://%s:%s%s", serverName, localPort, path);
-	}
-
 }
