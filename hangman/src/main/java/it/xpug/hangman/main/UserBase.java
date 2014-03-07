@@ -5,6 +5,7 @@ import java.util.*;
 public class UserBase {
 
 	private List<User> users = new ArrayList<>();
+	private Map<UserId, List<Prisoner>> prisoners = new HashMap<>();
 	private Random random;
 
 	public UserBase(Random random) {
@@ -34,6 +35,20 @@ public class UserBase {
 			}
 		}
 		return null;
+	}
+
+	public void addPrisoner(UserId userId, Prisoner prisoner) {
+		if (!prisoners.containsKey(userId)) {
+			prisoners.put(userId, new ArrayList<Prisoner>());
+		}
+		prisoners.get(userId).add(prisoner);
+	}
+
+	public Collection<Prisoner> findPrisoners(UserId userId) {
+		if (!prisoners.containsKey(userId)) {
+			return Collections.emptyList();
+		}
+		return prisoners.get(userId);
 	}
 
 }

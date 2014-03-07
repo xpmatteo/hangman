@@ -93,6 +93,8 @@ public class UserControllerTest {
 			oneOf(response).redirect("/users/1234/prisoners/3cb54a30");
 		}});
 		controller.handleRequest(request, response);
+
+		assertEquals(1, users.findPrisoners(userId).size());
 	}
 
 }

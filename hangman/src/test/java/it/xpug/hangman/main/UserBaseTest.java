@@ -34,7 +34,6 @@ public class UserBaseTest {
 		assertEquals("second user", true, userBase.contains(new UserId("456"), "asdf"));
 	}
 
-
 	@Test
 	public void findsUsers() throws Exception {
 		userBase.add(new UserId("123"), "pippo", "secret");
@@ -43,5 +42,13 @@ public class UserBaseTest {
 		assertEquals(expected, actual);
 	}
 
+	@Test
+	public void addPrisoners() throws Exception {
+		UserId userId = new UserId("123");
+		userBase.add(userId, "pippo", "secret");
+		Prisoner prisoner = new Prisoner("zzz", "abc");
+		userBase.addPrisoner(userId, prisoner);
 
+		assertEquals(Arrays.asList(prisoner), userBase.findPrisoners(userId));
+	}
 }

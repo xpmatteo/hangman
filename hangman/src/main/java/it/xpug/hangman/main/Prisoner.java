@@ -2,7 +2,9 @@ package it.xpug.hangman.main;
 
 import java.util.*;
 
-public class Prisoner {
+import org.mortbay.util.ajax.JSON;
+
+public class Prisoner implements JSON.Generator {
 
 	private String word;
 	private int guessesRemaining = 18;
@@ -20,6 +22,11 @@ public class Prisoner {
 
 	private String getMaskedWord() {
 		return word.replaceAll(".", "*");
+	}
+
+	@Override
+	public void addJSON(StringBuffer buffer) {
+		buffer.append(JSON.toString(this.toMap()));
 	}
 
 }

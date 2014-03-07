@@ -1,6 +1,5 @@
 package it.xpug.hangman.main;
 
-import java.util.*;
 
 
 public class UserController {
@@ -35,7 +34,7 @@ public class UserController {
 	private void getPrisoners(WebRequest request, WebResponse response) {
 		UserId userId = request.getUserId();
 		response.put("url", "/users/" + userId + "/prisoners");
-		response.put("items", new ArrayList<Prisoner>());
+		response.put("items", users.findPrisoners(userId));
 	}
 
 	private void index(WebResponse response) {
@@ -58,14 +57,14 @@ public class UserController {
 	}
 
 	private void createNewPrisoner(WebRequest request, WebResponse response) {
-		String newUserId = users.getNextUserId();
-		String path = request.getRequestURI() + "/" + newUserId;
+		String prisonerId = users.getNextUserId();
+		String path = request.getRequestURI() + "/" + prisonerId;
 
 		if (null == request.getParameter("password")) {
 			forbidden(response);
 		} else {
 			response.redirect(path);
-//			users.add(new UserId(newUserId), "a name", request.getParameter("password"));
+			users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, "pippo"));
 		}
 	}
 
