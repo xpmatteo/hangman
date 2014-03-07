@@ -84,6 +84,57 @@ public class HangmanEnd2EndTest {
 				"");
 	}
 
+	@Test@Ignore
+	public void getPrisoners() throws Exception {
+		givenUser("999", "zug", "zot");
+		withPrisoners(new Prisoner("111", "pippo"));
+
+		params.put("password", "zot");
+		get("/users/999/prisoners");
+
+		assertStatus(200);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{" +
+				" \"items\": [" +
+				"  {" +
+				"   \"user\": \"/users/999\"," +
+				"   \"state\": \"help\"," +
+				"   \"guesses\": \"/prisoners/111/guesses\"," +
+				"   \"misses\": []," +
+				"   \"word\": \"*****\"," +
+				"   \"id\": \"111\"," +
+				"   \"hits\": []," +
+				"   \"guesses_remaining\": 18," +
+				"   \"url\": \"/users/999/prisoners/111\"" +
+				"  }," +
+				" ]," +
+				" \"url\": \"/users/999/prisoners\"");
+	}
+
+	@Test
+	public void getPrisonersWithNoPrisoners() throws Exception {
+		givenUser("999", "zug", "zot");
+
+		params.put("password", "zot");
+		get("/users/999/prisoners");
+
+		assertStatus(200);
+		assertMimeType("application/json; charset=UTF-8");
+		assertBody("{"
+				+ "\"url\": \"/users/999/prisoners\","
+//				+ "\"items\": [],"
+				+ "}");
+	}
+
+//	@Test
+//	public void getPrisonersAuthentication() throws Exception {
+//		givenUser("999", "zug", "zot");
+//		assertForbidden("/users/999/prisoners", "bad password");
+//	}
+
+	private void withPrisoners(Prisoner prisoner) {
+	}
+
 	@Test
 	public void wrongPassword() throws Exception {
 		givenUser("123", "Pippoz", "s3cr3t");
