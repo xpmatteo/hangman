@@ -20,16 +20,20 @@ public class UserBase {
 	}
 
 	public boolean contains(UserId userId, String password) {
-		for (User user : users) {
-			if (user.authenticates(userId, password)) {
-				return true;
-			}
-		}
-		return false;
+		return find(userId, password) != null;
 	}
 
 	public String getNextUserId() {
 		return Long.toHexString((Math.abs(random.nextInt())));
+	}
+
+	public User find(UserId userId, String password) {
+		for (User user : users) {
+			if (user.authenticates(userId, password)) {
+				return user;
+			}
+		}
+		return null;
 	}
 
 }

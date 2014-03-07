@@ -81,4 +81,18 @@ public class UserControllerTest {
 		controller.handleRequest(request, response);
 	}
 
+	@Test
+	public void createAPrisoner() throws Exception {
+		final UserId userId = new UserId("1234");
+		users.add(userId, "name", "s3cret");
+		context.checking(new Expectations() {{
+			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners"));
+			allowing(request).getMethod(); will(returnValue("post"));
+			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
+			allowing(request).getUserId(); will(returnValue(userId));
+			oneOf(response).redirect("/users/1234/prisoners/3cb54a30");
+		}});
+		controller.handleRequest(request, response);
+	}
+
 }

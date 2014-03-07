@@ -23,6 +23,8 @@ public class UserController {
 			response.methodNotAllowed("Use POST on /users to create a user");
 		} else if (uri.matches("^/users/[a-f0-9]+/prisoners") && isGet) {
 			getPrisoners(request, response);
+		} else if (uri.matches("^/users/[a-f0-9]+/prisoners")) {
+			createNewPrisoner(request, response);
 		} else if (uri.startsWith("/users/") && isGet) {
 			getUsers(request, response);
 		} else if (isPost) {
@@ -55,14 +57,30 @@ public class UserController {
 		}
 	}
 
+	private void createNewPrisoner(WebRequest request, WebResponse response) {
+		String newUserId = users.getNextUserId();
+		String path = request.getRequestURI() + "/" + newUserId;
+
+		if (null == request.getParameter("password")) {
+			forbidden(response);
+		} else {
+			response.redirect(path);
+//			users.add(new UserId(newUserId), "a name", request.getParameter("password"));
+		}
+	}
+
 	private void getUsers(WebRequest request, WebResponse response) {
 		UserId userId = request.getUserId();
 		if (!users.contains(userId, request.getParameter("password"))) {
-			response.forbidden("You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.");
+			forbidden(response);
 			return;
 		}
 		response.put("prisoners", "/users/" + userId + "/prisoners");
 		response.put("id", userId);
 		response.put("url", "/users/" + userId);
+	}
+
+	private void forbidden(WebResponse response) {
+		response.forbidden("You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.");
 	}
 }
