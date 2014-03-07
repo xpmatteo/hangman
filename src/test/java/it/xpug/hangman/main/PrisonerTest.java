@@ -2,7 +2,6 @@ package it.xpug.hangman.main;
 
 import static org.junit.Assert.*;
 
-import java.io.*;
 import java.util.*;
 
 import org.junit.*;
@@ -19,8 +18,8 @@ public class PrisonerTest {
 
 	@Test
 	public void randomWord() throws Exception {
-		RandomWord word = new RandomWord(new File("/usr/share/dict/words"), new Random(123));
-		assertEquals("albuminiferous", word.getAnother());
+		RandomWord word = new RandomWord(new Random(123));
+		assertEquals("footrest", word.getAnother());
 	}
 
 	@Test
