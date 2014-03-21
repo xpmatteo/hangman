@@ -91,7 +91,7 @@ public class UserController {
 		String path = request.getRequestURI() + "/" + prisonerId;
 
 		response.redirect(path);
-		users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, new RandomWord().getAnother()));
+		users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, new WordList().getRandomWord()));
 	}
 
 	private void getUsers(WebRequest request, WebResponse response) {

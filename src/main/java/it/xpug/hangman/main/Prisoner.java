@@ -13,7 +13,7 @@ public class Prisoner implements JSON.Generator {
 	private String id;
 
 	public Prisoner(String id) {
-		this(id, new RandomWord().getAnother());
+		this(id, new WordList().getRandomWord());
 	}
 
 	public Prisoner(String id, String word) {

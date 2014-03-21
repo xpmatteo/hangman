@@ -2,7 +2,7 @@ package it.xpug.hangman.main;
 
 import java.util.*;
 
-public class RandomWord {
+public class WordList {
 	private List<String> words = new ArrayList<String>() {{
 		add("repay");
 		add("waterline");
@@ -33,15 +33,15 @@ public class RandomWord {
 	}};
 	private Random random;
 
-	public RandomWord() {
+	public WordList() {
 		this(new Random());
 	}
 
-	public RandomWord(Random random) {
+	public WordList(Random random) {
 		this.random = random;
 	}
 
-	public String getAnother() {
+	public String getRandomWord() {
 		return words.get(random.nextInt(words.size()));
 	}
 }

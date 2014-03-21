@@ -19,8 +19,8 @@ public class PrisonerTest {
 
 	@Test
 	public void randomWord() throws Exception {
-		RandomWord word = new RandomWord(new Random(123));
-		assertEquals("footrest", word.getAnother());
+		WordList list = new WordList(new Random(123));
+		assertEquals("footrest", list.getRandomWord());
 	}
 
 	@Test
