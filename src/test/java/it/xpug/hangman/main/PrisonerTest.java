@@ -14,6 +14,7 @@ public class PrisonerTest {
 		assertEquals("********", get("word"));
 		assertEquals(18, get("guesses_remaining"));
 		assertEquals("help", get("state"));
+		assertEquals("abc123", get("id"));
 	}
 
 	@Test

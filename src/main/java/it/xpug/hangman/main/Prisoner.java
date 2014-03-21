@@ -28,6 +28,7 @@ public class Prisoner implements JSON.Generator {
 		result.put("misses", misses);
 		result.put("hits", hits);
 		result.put("state", state());
+		result.put("id", id);
 		return result;
 	}
 
