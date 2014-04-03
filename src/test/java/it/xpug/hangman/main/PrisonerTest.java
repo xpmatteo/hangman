@@ -20,7 +20,7 @@ public class PrisonerTest {
 	@Test
 	public void randomWord() throws Exception {
 		WordList list = new WordList(new Random(123));
-		assertEquals("footrest", list.getRandomWord());
+		assertEquals("handhold", list.getRandomWord());
 	}
 
 	@Test

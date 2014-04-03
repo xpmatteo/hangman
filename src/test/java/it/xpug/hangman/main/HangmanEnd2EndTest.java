@@ -48,10 +48,10 @@ public class HangmanEnd2EndTest {
 		params.put("password", "Pluto");
 		post("/users");
 
-		assertStatus(303);
+		assertStatus(201);
 		assertMimeType("application/json; charset=UTF-8");
 		assertLocationHeader("/users/4cc2d9f6");
-		assertBody("{\"status_code\": 303, \"location\": \"/users/4cc2d9f6\", \"status\": \"See other\"}");
+		assertBody("{\"status_code\": 201, \"location\": \"/users/4cc2d9f6\", \"status\": \"Created\"}");
 	}
 
 	@Test
@@ -85,33 +85,6 @@ public class HangmanEnd2EndTest {
 				"");
 	}
 
-	@Test@Ignore
-	public void getPrisoners() throws Exception {
-		givenUser("999", "zug", "zot");
-		withPrisoners(new Prisoner("111", "pippo"));
-
-		params.put("password", "zot");
-		get("/users/999/prisoners");
-
-		assertStatus(200);
-		assertMimeType("application/json; charset=UTF-8");
-		assertBody("{" +
-				" \"items\": [" +
-				"  {" +
-				"   \"user\": \"/users/999\"," +
-				"   \"state\": \"help\"," +
-				"   \"guesses\": \"/prisoners/111/guesses\"," +
-				"   \"misses\": []," +
-				"   \"word\": \"*****\"," +
-				"   \"id\": \"111\"," +
-				"   \"hits\": []," +
-				"   \"guesses_remaining\": 18," +
-				"   \"url\": \"/users/999/prisoners/111\"" +
-				"  }," +
-				" ]," +
-				" \"url\": \"/users/999/prisoners\"");
-	}
-
 	@Test
 	public void getPrisonersWithNoPrisoners() throws Exception {
 		givenUser("999", "zug", "zot");
@@ -121,19 +94,6 @@ public class HangmanEnd2EndTest {
 
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
-//		assertBody("{"
-//				+ "\"url\": \"/users/999/prisoners\","
-//				+ "\"items\": [],"
-//				+ "}");
-	}
-
-//	@Test
-//	public void getPrisonersAuthentication() throws Exception {
-//		givenUser("999", "zug", "zot");
-//		assertForbidden("/users/999/prisoners", "bad password");
-//	}
-
-	private void withPrisoners(Prisoner prisoner) {
 	}
 
 	@Test

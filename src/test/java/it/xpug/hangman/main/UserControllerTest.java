@@ -58,7 +58,7 @@ public class UserControllerTest {
 			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("name")); will(returnValue("gino"));
 			allowing(request).getParameter(with("password")); will(returnValue("secr3t"));
-			oneOf(response).redirect("/users/3cb54a30");
+			oneOf(response).created("/users/3cb54a30");
 		}});
 
 		controller.handleRequest(request, response);
@@ -90,7 +90,7 @@ public class UserControllerTest {
 			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
 			allowing(request).getUserId(); will(returnValue(userId));
-			oneOf(response).redirect("/users/1234/prisoners/3cb54a30");
+			oneOf(response).created("/users/1234/prisoners/3cb54a30");
 		}});
 		controller.handleRequest(request, response);
 
@@ -110,7 +110,7 @@ public class UserControllerTest {
 			allowing(request).getParameter(with("guess")); will(returnValue("x"));
 			allowing(request).getUserId(); will(returnValue(userId));
 			allowing(request).getPrisonerId(); will(returnValue("abc123"));
-			oneOf(response).redirect("/users/1234/prisoners/abc123");
+			oneOf(response).created("/users/1234/prisoners/abc123");
 		}});
 		controller.handleRequest(request, response);
 

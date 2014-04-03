@@ -51,7 +51,7 @@ public class UserController {
 		String prisonerId = request.getPrisonerId();
 		Prisoner prisoner = users.findPrisoner(userId, prisonerId);
 		prisoner.guess(request.getParameter("guess"));
-		response.redirect(request.getRequestURI());
+		response.created(request.getRequestURI());
 	}
 
 	private void getOnePrisoner(WebRequest request, WebResponse response) {
@@ -81,7 +81,7 @@ public class UserController {
 		} else if (null == request.getParameter("password")) {
 			response.validationError("Parameter 'password' is required");
 		} else {
-			response.redirect(path);
+			response.created(path);
 			users.add(new UserId(newUserId), "a name", request.getParameter("password"));
 		}
 	}
@@ -90,7 +90,7 @@ public class UserController {
 		String prisonerId = users.getNextUserId();
 		String path = request.getRequestURI() + "/" + prisonerId;
 
-		response.redirect(path);
+		response.created(path);
 		users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, new WordList().getRandomWord()));
 	}
 

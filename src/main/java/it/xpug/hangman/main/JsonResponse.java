@@ -29,10 +29,10 @@ public class JsonResponse implements WebResponse {
 	}
 
 	@Override
-	public void redirect(String path) {
+	public void created(String path) {
 		objects.put("location", path);
 		httpServletResponse.setHeader("Location", path);
-		setStatus(SC_SEE_OTHER, "See other");
+		setStatus(SC_CREATED, "Created");
 	}
 
 	@Override
