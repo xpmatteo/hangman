@@ -26,6 +26,7 @@ public class HangmanEnd2EndTest {
 		get("/");
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
+		assertHeader("Access-Control-Allow-Origin", "*");
 		assertBody("{\"index\":\"/\",\"users\":\"/users\"}");
 	}
 
@@ -165,15 +166,17 @@ public class HangmanEnd2EndTest {
 	}
 
 	private void assertMimeType(String expectedMimeType) {
-		Header contentType = response.getLastHeader("content-type");
-		assertNotNull("Mime type not set", contentType);
-		assertEquals("Mime type", expectedMimeType, contentType.getValue());
+		assertHeader("content-type", expectedMimeType);
 	}
 
 	private void assertLocationHeader(String expectedLocation) {
-		Header location = response.getLastHeader("location");
-		assertNotNull("Location not set", location);
-		assertEquals("Location", expectedLocation, location.getValue());
+		assertHeader("location", expectedLocation);
+	}
+
+	private void assertHeader(String name, String expectedValue) {
+		Header header = response.getLastHeader(name.toLowerCase());
+		assertNotNull(name + " not set", header);
+		assertEquals(name, expectedValue, header.getValue());
 	}
 
 	private void assertStatus(int expectedStatus) {
