@@ -17,11 +17,14 @@ public class UserController {
 		boolean isGet = request.isGet();
 		boolean isPost = request.isPost();
 
-		if (path.matches("^/users/[a-f0-9]+.*") && passwordDoesNotMatch(request)) {
-			forbidden(response);
-		} else if (path.equals("/") && isGet) {
+		PasswordProtectionFilter filter = new PasswordProtectionFilter(users);
+		filter.applyTo(request, response);
+		if (!filter.shouldContinue())
+			return;
+
+		if (isIndex(path) && isGet) {
 			index(response);
-		} else if (path.equals("/users") && isGet) {
+		} else if (isUsers(path) && isGet) {
 			response.methodNotAllowed("Use POST on /users to create a user");
 		} else if (path.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+") && isGet) {
 			getOnePrisoner(request, response);
@@ -36,6 +39,18 @@ public class UserController {
 		} else if (isPost) {
 			createNewUser(request, response);
 		}
+	}
+
+	private boolean isUsers(String path) {
+		return path.equals("/users");
+	}
+
+	private boolean isIndex(String path) {
+		return path.equals("/");
+	}
+
+	private boolean needsPassword(String path) {
+		return path.matches("^/users/[a-f0-9]+.*");
 	}
 
 	private boolean passwordDoesNotMatch(WebRequest request) {
