@@ -14,4 +14,8 @@ public interface WebRequest {
 
 	String getPrisonerId();
 
+	boolean isGet();
+
+	boolean isPost();
+
 }

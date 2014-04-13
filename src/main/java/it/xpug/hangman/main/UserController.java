@@ -14,18 +14,12 @@ public class UserController {
 
 	public void handleRequest(WebRequest request, WebResponse response) {
 		String uri = request.getRequestURI();
-		String method = request.getMethod().toLowerCase();
-		boolean isGet = method.equals("get");
-		boolean isPost = method.equals("post");
+		boolean isGet = request.isGet();
+		boolean isPost = request.isPost();
 
-		if (uri.matches("^/users/[a-f0-9]+.*")) {
-			if (!users.contains(request.getUserId(), request.getParameter("password"))) {
-				forbidden(response);
-				return;
-			}
-		}
-
-		if (uri.equals("/") && isGet) {
+		if (uri.matches("^/users/[a-f0-9]+.*") && passwordDoesNotMatch(request)) {
+			forbidden(response);
+		} else if (uri.equals("/") && isGet) {
 			index(response);
 		} else if (uri.equals("/users") && isGet) {
 			response.methodNotAllowed("Use POST on /users to create a user");
@@ -42,6 +36,10 @@ public class UserController {
 		} else if (isPost) {
 			createNewUser(request, response);
 		}
+	}
+
+	private boolean passwordDoesNotMatch(WebRequest request) {
+		return !users.contains(request.getUserId(), request.getParameter("password"));
 	}
 
 	private void guess(WebRequest request, WebResponse response) {

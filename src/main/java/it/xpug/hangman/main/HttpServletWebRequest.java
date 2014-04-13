@@ -21,7 +21,7 @@ public class HttpServletWebRequest implements WebRequest {
 
 	@Override
 	public String getMethod() {
-		return request.getMethod();
+		return request.getMethod().toLowerCase();
 	}
 
 	@Override
@@ -43,5 +43,13 @@ public class HttpServletWebRequest implements WebRequest {
 		return matcher.group(2);
 	}
 
+	@Override
+	public boolean isGet() {
+		return getMethod().equals("get");
+	}
 
+	@Override
+	public boolean isPost() {
+		return getMethod().equals("post");
+	}
 }

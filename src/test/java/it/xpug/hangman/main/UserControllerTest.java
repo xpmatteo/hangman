@@ -25,9 +25,9 @@ public class UserControllerTest {
 		UserBase users = new UserBase();
 		UserController controller = new UserController(users);
 
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("http://whatever/users"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with(any(String.class))); will(returnValue(null));
 			oneOf(response).validationError("Parameter 'name' is required");
 		}});
@@ -40,9 +40,9 @@ public class UserControllerTest {
 		UserBase users = new UserBase();
 		UserController controller = new UserController(users);
 
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("http://whatever/users"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("name")); will(returnValue("gino"));
 			allowing(request).getParameter(with(any(String.class))); will(returnValue(null));
 			oneOf(response).validationError("Parameter 'password' is required");
@@ -51,12 +51,26 @@ public class UserControllerTest {
 		controller.handleRequest(request, response);
 	}
 
+	private void givenPostRequest() {
+		context.checking(new Expectations() {{
+			allowing(request).isGet(); will(returnValue(false));
+			allowing(request).isPost(); will(returnValue(true));
+		}});
+	}
+
+	private void givenGetRequest() {
+		context.checking(new Expectations() {{
+			allowing(request).isGet(); will(returnValue(true));
+			allowing(request).isPost(); will(returnValue(false));
+		}});
+	}
+
 	@Test
 	public void createsAUser() throws Exception {
 
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("http://whatever/users"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("name")); will(returnValue("gino"));
 			allowing(request).getParameter(with("password")); will(returnValue("secr3t"));
 			oneOf(response).created("/users/3cb54a30");
@@ -71,9 +85,9 @@ public class UserControllerTest {
 	public void returnListOfPrisoners() throws Exception {
 		final UserId userId = new UserId("1234");
 		users.add(userId, "name", "s3cret");
+		givenGetRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners"));
-			allowing(request).getMethod(); will(returnValue("get"));
 			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
 			allowing(request).getUserId(); will(returnValue(userId));
 			oneOf(response).put("items", new ArrayList<Prisoner>());
@@ -86,9 +100,9 @@ public class UserControllerTest {
 	public void createAPrisoner() throws Exception {
 		final UserId userId = new UserId("1234");
 		users.add(userId, "name", "s3cret");
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
 			allowing(request).getUserId(); will(returnValue(userId));
 			oneOf(response).created("/users/1234/prisoners/3cb54a30");
@@ -104,9 +118,9 @@ public class UserControllerTest {
 		users.add(userId, "name", "s3cret");
 		users.addPrisoner(userId, new Prisoner("abc123", "word"));
 
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners/abc123"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
 			allowing(request).getParameter(with("guess")); will(returnValue("x"));
 			allowing(request).getUserId(); will(returnValue(userId));
@@ -124,9 +138,9 @@ public class UserControllerTest {
 		users.add(userId, "name", "s3cret");
 		users.addPrisoner(userId, new Prisoner("abc123", "word"));
 
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners/abc123"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("password")); will(returnValue("s3cret"));
 			allowing(request).getParameter(with("guess")); will(returnValue(null));
 			allowing(request).getUserId(); will(returnValue(userId));
@@ -143,9 +157,9 @@ public class UserControllerTest {
 		users.add(userId, "name", "s3cret");
 		users.addPrisoner(userId, new Prisoner("abc123", "word"));
 
+		givenPostRequest();
 		context.checking(new Expectations() {{
 			allowing(request).getRequestURI(); will(returnValue("/users/1234/prisoners/abc123"));
-			allowing(request).getMethod(); will(returnValue("post"));
 			allowing(request).getParameter(with("password")); will(returnValue(null));
 			allowing(request).getParameter(with("guess")); will(returnValue("x"));
 			allowing(request).getUserId(); will(returnValue(userId));
