@@ -15,7 +15,7 @@ public class HttpServletWebRequest implements WebRequest {
 	}
 
 	@Override
-	public String getRequestURI() {
+	public String getRequestPath() {
 		return request.getRequestURI();
 	}
 
@@ -31,14 +31,14 @@ public class HttpServletWebRequest implements WebRequest {
 
 	@Override
 	public UserId getUserId() {
-		Matcher matcher = Pattern.compile("/users/([a-f0-9]+)").matcher(getRequestURI());
+		Matcher matcher = Pattern.compile("/users/([a-f0-9]+)").matcher(getRequestPath());
 		matcher.find();
 		return new UserId(matcher.group(1));
 	}
 
 	@Override
 	public String getPrisonerId() {
-		Matcher matcher = Pattern.compile("/users/([a-f0-9]+)/prisoners/([a-f0-9]+)").matcher(getRequestURI());
+		Matcher matcher = Pattern.compile("/users/([a-f0-9]+)/prisoners/([a-f0-9]+)").matcher(getRequestPath());
 		matcher.find();
 		return matcher.group(2);
 	}

@@ -13,25 +13,25 @@ public class UserController {
 	}
 
 	public void handleRequest(WebRequest request, WebResponse response) {
-		String uri = request.getRequestURI();
+		String path = request.getRequestPath();
 		boolean isGet = request.isGet();
 		boolean isPost = request.isPost();
 
-		if (uri.matches("^/users/[a-f0-9]+.*") && passwordDoesNotMatch(request)) {
+		if (path.matches("^/users/[a-f0-9]+.*") && passwordDoesNotMatch(request)) {
 			forbidden(response);
-		} else if (uri.equals("/") && isGet) {
+		} else if (path.equals("/") && isGet) {
 			index(response);
-		} else if (uri.equals("/users") && isGet) {
+		} else if (path.equals("/users") && isGet) {
 			response.methodNotAllowed("Use POST on /users to create a user");
-		} else if (uri.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+") && isGet) {
+		} else if (path.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+") && isGet) {
 			getOnePrisoner(request, response);
-		} else if (uri.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+")) {
+		} else if (path.matches("^/users/[a-f0-9]+/prisoners/[a-f0-9]+")) {
 			guess(request, response);
-		} else if (uri.matches("^/users/[a-f0-9]+/prisoners") && isGet) {
+		} else if (path.matches("^/users/[a-f0-9]+/prisoners") && isGet) {
 			getPrisoners(request, response);
-		} else if (uri.matches("^/users/[a-f0-9]+/prisoners")) {
+		} else if (path.matches("^/users/[a-f0-9]+/prisoners")) {
 			createNewPrisoner(request, response);
-		} else if (uri.startsWith("/users/") && isGet) {
+		} else if (path.startsWith("/users/") && isGet) {
 			getUsers(request, response);
 		} else if (isPost) {
 			createNewUser(request, response);
@@ -51,7 +51,7 @@ public class UserController {
 		String prisonerId = request.getPrisonerId();
 		Prisoner prisoner = users.findPrisoner(userId, prisonerId);
 		prisoner.guess(request.getParameter("guess"));
-		response.created(request.getRequestURI());
+		response.created(request.getRequestPath());
 	}
 
 	private void getOnePrisoner(WebRequest request, WebResponse response) {
@@ -88,7 +88,7 @@ public class UserController {
 
 	private void createNewPrisoner(WebRequest request, WebResponse response) {
 		String prisonerId = users.getNextUserId();
-		String path = request.getRequestURI() + "/" + prisonerId;
+		String path = request.getRequestPath() + "/" + prisonerId;
 
 		response.created(path);
 		users.addPrisoner(request.getUserId(), new Prisoner(prisonerId, new WordList().getRandomWord()));
