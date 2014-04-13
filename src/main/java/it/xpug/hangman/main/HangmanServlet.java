@@ -1,6 +1,8 @@
 package it.xpug.hangman.main;
 
 
+import it.xpug.hangman.domain.*;
+
 import java.io.*;
 
 import javax.servlet.*;

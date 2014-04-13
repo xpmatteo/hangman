@@ -1,6 +1,7 @@
 package it.xpug.hangman.main;
 
 import static org.junit.Assert.*;
+import it.xpug.hangman.domain.*;
 
 import javax.servlet.http.*;
 

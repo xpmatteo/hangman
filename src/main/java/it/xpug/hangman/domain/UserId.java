@@ -1,4 +1,4 @@
-package it.xpug.hangman.main;
+package it.xpug.hangman.domain;
 
 public class UserId {
 

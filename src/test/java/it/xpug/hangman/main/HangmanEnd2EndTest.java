@@ -4,6 +4,7 @@ package it.xpug.hangman.main;
 import static org.junit.Assert.*;
 import static org.mortbay.util.ajax.JSON.*;
 import it.xpug.generic.web.*;
+import it.xpug.hangman.domain.*;
 
 import java.io.*;
 import java.net.*;

@@ -3,6 +3,7 @@ package it.xpug.hangman.main;
 
 import static java.lang.Integer.*;
 import it.xpug.generic.web.*;
+import it.xpug.hangman.domain.*;
 
 
 public class Main {
