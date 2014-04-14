@@ -2,7 +2,7 @@ package it.xpug.hangman.web;
 
 import it.xpug.hangman.domain.*;
 
-public class PrisonerResource {
+public class PrisonerResource extends Resource {
 
 	private UserBase users;
 
@@ -10,21 +10,14 @@ public class PrisonerResource {
 		this.users = users;
 	}
 
-	public void service(WebRequest request, WebResponse response) {
-		if (request.isGet())
-			getOnePrisoner(request, response);
-		else
-			guess(request, response);
-	}
-
-	private void getOnePrisoner(WebRequest request, WebResponse response) {
+	public void doGet(WebRequest request, WebResponse response) {
 		UserId userId = request.getUserId();
 		String prisonerId = request.getPrisonerId();
 		response.put("url", "/users/" + userId + "/prisoners/" + prisonerId);
 		response.put("prisoner", users.findPrisoner(userId, prisonerId));
 	}
 
-	private void guess(WebRequest request, WebResponse response) {
+	public void doPost(WebRequest request, WebResponse response) {
 		if (null == request.getParameter("guess")) {
 			response.validationError("Parameter 'guess' is required");
 			return;

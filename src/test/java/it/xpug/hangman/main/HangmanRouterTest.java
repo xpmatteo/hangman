@@ -10,7 +10,7 @@ import org.jmock.*;
 import org.jmock.integration.junit4.*;
 import org.junit.*;
 
-public class UserControllerTest {
+public class HangmanRouterTest {
 
 	@Rule
 	public JUnitRuleMockery context = new JUnitRuleMockery();
@@ -19,7 +19,7 @@ public class UserControllerTest {
 
 	Random random = new Random(444);
 	UserBase users = new UserBase(random);
-	HangmanRouter controller = new HangmanRouter(users);
+	Router router = new HangmanRouter(users);
 
 	@Test
 	public void itTakesANameToCreateAUser() throws Exception {
@@ -29,7 +29,7 @@ public class UserControllerTest {
 			oneOf(response).validationError("Parameter 'name' is required");
 		}});
 
-		controller.handleRequest(request, response);
+		router.service(request, response);
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class UserControllerTest {
 			oneOf(response).validationError("Parameter 'password' is required");
 		}});
 
-		controller.handleRequest(request, response);
+		router.service(request, response);
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class UserControllerTest {
 			oneOf(response).created("/users/3cb54a30");
 		}});
 
-		controller.handleRequest(request, response);
+		router.service(request, response);
 
 		assertTrue("user created", users.contains(new UserId("3cb54a30"), "secr3t"));
 	}
@@ -70,7 +70,7 @@ public class UserControllerTest {
 			oneOf(response).put("items", emptyList());
 			oneOf(response).put("url", "/users/1234/prisoners");
 		}});
-		controller.handleRequest(request, response);
+		router.service(request, response);
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class UserControllerTest {
 			allowing(request).getUserId(); will(returnValue(userId));
 			oneOf(response).created("/users/1234/prisoners/3cb54a30");
 		}});
-		controller.handleRequest(request, response);
+		router.service(request, response);
 
 		assertEquals(1, users.findPrisoners(userId).size());
 	}
@@ -103,7 +103,7 @@ public class UserControllerTest {
 			allowing(request).getPrisonerId(); will(returnValue("abc123"));
 			oneOf(response).created("/users/1234/prisoners/abc123");
 		}});
-		controller.handleRequest(request, response);
+		router.service(request, response);
 
 		assertEquals(17, users.findPrisoner(userId, "abc123").getGuessesRemaining());
 	}
@@ -121,7 +121,7 @@ public class UserControllerTest {
 			allowing(request).getUserId(); will(returnValue(userId));
 			oneOf(response).validationError("Parameter 'guess' is required");
 		}});
-		controller.handleRequest(request, response);
+		router.service(request, response);
 
 		assertEquals(18, users.findPrisoner(userId, "abc123").getGuessesRemaining());
 	}
@@ -140,7 +140,7 @@ public class UserControllerTest {
 			allowing(request).getPrisonerId(); will(returnValue("abc123"));
 			oneOf(response).forbidden(with(any(String.class)));
 		}});
-		controller.handleRequest(request, response);
+		router.service(request, response);
 
 		assertEquals(18, users.findPrisoner(userId, "abc123").getGuessesRemaining());
 	}

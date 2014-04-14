@@ -19,10 +19,10 @@ public class HangmanServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		WebResponse jsonResponse = new JsonResponse(response);
+		WebResponse webResponse = new JsonResponse(response);
 		WebRequest webRequest = new HttpServletWebRequest(request);
-		new HangmanRouter(users).handleRequest(webRequest, jsonResponse);
-		response.getWriter().write(jsonResponse.toString());
+		new HangmanRouter(users).service(webRequest, webResponse);
+		response.getWriter().write(webResponse.toString());
 	}
 
 

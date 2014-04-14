@@ -1,9 +1,9 @@
 package it.xpug.hangman.web;
 
 
-public class IndexResource {
+public class IndexResource extends Resource {
 
-	public void service(WebRequest request, WebResponse response) {
+	public void doGet(WebRequest request, WebResponse response) {
 		response.put("users", "/users");
 		response.put("index", "/");
 	}

@@ -4,34 +4,13 @@ import it.xpug.hangman.domain.*;
 import it.xpug.hangman.web.*;
 
 
-
-public class HangmanRouter {
-
-	private UserBase users;
-
+public class HangmanRouter extends Router {
 	public HangmanRouter(UserBase users) {
-		this.users = users;
+		setFilter(new PasswordProtectionFilter(users));
+		addRoute("/", new IndexResource());
+		addRoute("/users", new UsersCollectionResource(users));
+		addRoute("/users/[a-f0-9]+/prisoners/[a-f0-9]+", new PrisonerResource(users));
+		addRoute("/users/[a-f0-9]+/prisoners", new PrisonersCollectionResource(users));
+		addRoute("/users/[a-f0-9]+", new UserResource());
 	}
-
-	public void handleRequest(WebRequest request, WebResponse response) {
-		String path = request.getPath();
-
-		PasswordProtectionFilter filter = new PasswordProtectionFilter(users);
-		filter.service(request, response);
-		if (!filter.shouldContinue())
-			return;
-
-		if (path.matches("/")) {
-			new IndexResource().service(request, response);
-		} else if (path.matches("/users")) {
-			new UsersCollectionResource(users).service(request, response);
-		} else if (path.matches("/users/[a-f0-9]+/prisoners/[a-f0-9]+")) {
-			new PrisonerResource(users).service(request, response);
-		} else if (path.matches("/users/[a-f0-9]+/prisoners")) {
-			new PrisonersCollectionResource(users).service(request, response);
-		} else if (path.matches("/users/[a-f0-9]+")) {
-			new UserResource().service(request, response);
-		}
-	}
-
 }
