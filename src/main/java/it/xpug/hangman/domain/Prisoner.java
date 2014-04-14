@@ -1,7 +1,5 @@
 package it.xpug.hangman.domain;
 
-import it.xpug.hangman.main.*;
-
 import java.util.*;
 
 import org.mortbay.util.ajax.JSON;
