@@ -4,7 +4,7 @@ import it.xpug.hangman.domain.*;
 
 public interface WebRequest {
 
-	String getRequestPath();
+	String getPath();
 
 	String getMethod();
 

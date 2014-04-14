@@ -146,7 +146,7 @@ public class UserControllerTest {
 
 	private void givenPostRequest(final String path) {
 		context.checking(new Expectations() {{
-			allowing(request).getRequestPath(); will(returnValue(path));
+			allowing(request).getPath(); will(returnValue(path));
 			allowing(request).isGet(); will(returnValue(false));
 			allowing(request).isPost(); will(returnValue(true));
 		}});
@@ -154,7 +154,7 @@ public class UserControllerTest {
 
 	private void givenGetRequest(final String path) {
 		context.checking(new Expectations() {{
-			allowing(request).getRequestPath(); will(returnValue(path));
+			allowing(request).getPath(); will(returnValue(path));
 			allowing(request).isGet(); will(returnValue(true));
 			allowing(request).isPost(); will(returnValue(false));
 		}});

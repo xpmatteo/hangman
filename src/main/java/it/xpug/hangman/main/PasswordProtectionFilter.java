@@ -11,8 +11,8 @@ public class PasswordProtectionFilter {
 		this.users = users;
 	}
 
-	public void applyTo(WebRequest request, WebResponse response) {
-		if (needsPassword(request.getRequestPath()) && passwordDoesNotMatch(request)) {
+	public void service(WebRequest request, WebResponse response) {
+		if (needsPassword(request.getPath()) && passwordDoesNotMatch(request)) {
 			forbidden(response);
 			shouldContinue = false;
 		}
