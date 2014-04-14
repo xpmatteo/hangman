@@ -1,6 +1,7 @@
 package it.xpug.hangman.main;
 
 import static javax.servlet.http.HttpServletResponse.*;
+import it.xpug.hangman.web.*;
 
 import java.util.*;
 

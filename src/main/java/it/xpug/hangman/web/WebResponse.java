@@ -1,4 +1,4 @@
-package it.xpug.hangman.main;
+package it.xpug.hangman.web;
 
 public interface WebResponse {
 

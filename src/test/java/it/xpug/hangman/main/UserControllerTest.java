@@ -2,6 +2,7 @@ package it.xpug.hangman.main;
 
 import static org.junit.Assert.*;
 import it.xpug.hangman.domain.*;
+import it.xpug.hangman.web.*;
 
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class UserControllerTest {
 
 	Random random = new Random(444);
 	UserBase users = new UserBase(random);
-	UserController controller = new UserController(users);
+	HangmanRouter controller = new HangmanRouter(users);
 
 	@Test
 	public void itTakesANameToCreateAUser() throws Exception {

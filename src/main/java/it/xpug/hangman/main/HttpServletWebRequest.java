@@ -1,6 +1,7 @@
 package it.xpug.hangman.main;
 
 import it.xpug.hangman.domain.*;
+import it.xpug.hangman.web.*;
 
 import java.util.regex.*;
 

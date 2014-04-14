@@ -1,4 +1,4 @@
-package it.xpug.hangman.main;
+package it.xpug.hangman.web;
 
 import it.xpug.hangman.domain.*;
 
@@ -21,14 +21,13 @@ public class UsersCollectionResource extends Resource {
 	}
 
 	private void createNewUser(WebRequest request, WebResponse response) {
-		String newUserId = users.getNextUserId();
-		String path = "/users/" + newUserId;
-
 		if (null == request.getParameter("name")) {
 			response.validationError("Parameter 'name' is required");
 		} else if (null == request.getParameter("password")) {
 			response.validationError("Parameter 'password' is required");
 		} else {
+			String newUserId = users.getNextUserId();
+			String path = "/users/" + newUserId;
 			response.created(path);
 			users.add(new UserId(newUserId), "a name", request.getParameter("password"));
 		}

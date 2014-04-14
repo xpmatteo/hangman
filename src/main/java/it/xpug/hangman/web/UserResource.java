@@ -1,4 +1,4 @@
-package it.xpug.hangman.main;
+package it.xpug.hangman.web;
 
 import it.xpug.hangman.domain.*;
 

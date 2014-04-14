@@ -1,4 +1,5 @@
-package it.xpug.hangman.main;
+package it.xpug.hangman.web;
+
 
 public abstract class Resource {
 

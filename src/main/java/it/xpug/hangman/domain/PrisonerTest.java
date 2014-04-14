@@ -1,7 +1,6 @@
-package it.xpug.hangman.main;
+package it.xpug.hangman.domain;
 
 import static org.junit.Assert.*;
-import it.xpug.hangman.domain.*;
 
 import java.util.*;
 

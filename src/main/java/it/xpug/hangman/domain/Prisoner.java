@@ -2,7 +2,7 @@ package it.xpug.hangman.domain;
 
 import java.util.*;
 
-import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.*;
 
 public class Prisoner implements JSON.Generator {
 

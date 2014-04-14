@@ -2,6 +2,7 @@ package it.xpug.hangman.main;
 
 
 import it.xpug.hangman.domain.*;
+import it.xpug.hangman.web.*;
 
 import java.io.*;
 
@@ -20,7 +21,7 @@ public class HangmanServlet extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		WebResponse jsonResponse = new JsonResponse(response);
 		WebRequest webRequest = new HttpServletWebRequest(request);
-		new UserController(users).handleRequest(webRequest, jsonResponse);
+		new HangmanRouter(users).handleRequest(webRequest, jsonResponse);
 		response.getWriter().write(jsonResponse.toString());
 	}
 

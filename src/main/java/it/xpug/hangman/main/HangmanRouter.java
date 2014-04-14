@@ -1,14 +1,15 @@
 package it.xpug.hangman.main;
 
 import it.xpug.hangman.domain.*;
+import it.xpug.hangman.web.*;
 
 
 
-public class UserController {
+public class HangmanRouter {
 
 	private UserBase users;
 
-	public UserController(UserBase users) {
+	public HangmanRouter(UserBase users) {
 		this.users = users;
 	}
 
