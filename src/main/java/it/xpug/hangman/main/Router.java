@@ -7,9 +7,9 @@ import java.util.*;
 public class Router {
 
 	protected Map<String, Resource> map = new HashMap<String, Resource>();
-	protected PasswordProtectionFilter filter;
+	protected Filter filter;
 
-	protected void setFilter(PasswordProtectionFilter filter) {
+	protected void setFilter(Filter filter) {
 		this.filter = filter;
 	}
 
@@ -18,10 +18,12 @@ public class Router {
 	}
 
 	public void service(WebRequest request, WebResponse response) {
-		filter.service(request, response);
-		if (!filter.shouldContinue())
-			return;
-	
+		if (filter != null) {
+			filter.service(request, response);
+			if (!filter.shouldContinue())
+				return;
+		}
+
 		for (String pathRegexp : map.keySet()) {
 			if (request.getPath().matches(pathRegexp)) {
 				map.get(pathRegexp).service(request, response);

@@ -2,7 +2,7 @@ package it.xpug.hangman.web;
 
 import it.xpug.hangman.domain.*;
 
-public class PasswordProtectionFilter {
+public class PasswordProtectionFilter implements Filter {
 
 	private UserBase users;
 	private boolean shouldContinue = true;
