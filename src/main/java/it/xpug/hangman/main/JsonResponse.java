@@ -13,7 +13,7 @@ import org.mortbay.util.ajax.*;
 public class JsonResponse implements WebResponse {
 
 	private HttpServletResponse httpServletResponse;
-	private Map<String, Object> objects = new HashMap<>();
+	private Map<String, Object> objects = new HashMap<String, Object>();
 
 	public JsonResponse(HttpServletResponse response) {
 		this.httpServletResponse = response;

@@ -22,7 +22,7 @@ public class Prisoner implements JSON.Generator {
 	}
 
 	public Map<String, Object> toMap() {
-		Map<String, Object> result = new HashMap<>();
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("word", getMaskedWord());
 		result.put("guesses_remaining", guessesRemaining);
 		result.put("misses", misses);

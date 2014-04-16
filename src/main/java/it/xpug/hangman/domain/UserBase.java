@@ -4,8 +4,8 @@ import java.util.*;
 
 public class UserBase {
 
-	private List<User> users = new ArrayList<>();
-	private Map<UserId, List<Prisoner>> prisoners = new HashMap<>();
+	private List<User> users = new ArrayList<User>();
+	private Map<UserId, List<Prisoner>> prisoners = new HashMap<UserId, List<Prisoner>>();
 	private Random random;
 
 	public UserBase(Random random) {
