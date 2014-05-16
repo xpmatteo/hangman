@@ -1,1 +1,1 @@
-web:    script/run.sh
+web:    script/run.s
