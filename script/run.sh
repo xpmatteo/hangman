@@ -1,6 +1,7 @@
+#!/bin/bash
 
 set -e
-cd "$(dirname $0)/.."
+cd "$(dirname "$0")/.."
 
 if [ ! -d target/dependency ]; then
 	mvn package

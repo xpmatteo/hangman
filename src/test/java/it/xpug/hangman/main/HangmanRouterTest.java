@@ -101,7 +101,8 @@ public class HangmanRouterTest {
 		context.checking(new Expectations() {{
 			allowing(request).getUserId(); will(returnValue(userId));
 			allowing(request).getPrisonerId(); will(returnValue("abc123"));
-			oneOf(response).created("/users/1234/prisoners/abc123");
+			oneOf(response).put("url", "/users/1234/prisoners/abc123");
+			oneOf(response).put(with(equal("prisoner")), with(any(Prisoner.class)));
 		}});
 		router.service(request, response);
 

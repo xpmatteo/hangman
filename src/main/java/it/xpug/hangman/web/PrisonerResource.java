@@ -26,6 +26,8 @@ public class PrisonerResource extends Resource {
 		String prisonerId = request.getPrisonerId();
 		Prisoner prisoner = users.findPrisoner(userId, prisonerId);
 		prisoner.guess(request.getParameter("guess"));
-		response.created(request.getPath());
+		
+		response.put("url", "/users/" + userId + "/prisoners/" + prisonerId);
+		response.put("prisoner", users.findPrisoner(userId, prisonerId));
 	}
 }
