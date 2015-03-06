@@ -8,5 +8,6 @@ public interface WebResponse {
 	void validationError(String message);
 
 	void put(String name, Object value);
+	void unauthorized(String string);
 
 }

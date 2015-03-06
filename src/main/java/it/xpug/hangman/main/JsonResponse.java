@@ -41,6 +41,13 @@ public class JsonResponse implements WebResponse {
 		objects.put("description", description);
 		setStatus(SC_FORBIDDEN, "Forbidden");
 	}
+	
+	@Override
+	public void unauthorized(String description) {
+		objects.put("description", description);	
+		httpServletResponse.setHeader("WWW-Authenticate", "Basic realm=\"hangman\"");
+		setStatus(SC_UNAUTHORIZED, "Unauthorized");
+	}
 
 	@Override
 	public void put(String name, Object value) {
@@ -64,4 +71,5 @@ public class JsonResponse implements WebResponse {
 		objects.put("status_code", statusCode);
 		httpServletResponse.setStatus(statusCode);
 	}
+
 }

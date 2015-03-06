@@ -64,7 +64,7 @@ public class HangmanRouterTest {
 		final UserId userId = new UserId("1234");
 		users.add(userId, "name", "s3cret");
 		givenGetRequest("/users/1234/prisoners");
-		givenParameter("password", "s3cret");
+		givenAuthentication("name", "s3cret");
 		context.checking(new Expectations() {{
 			allowing(request).getUserId(); will(returnValue(userId));
 			oneOf(response).put("items", emptyList());
@@ -78,7 +78,7 @@ public class HangmanRouterTest {
 		final UserId userId = new UserId("1234");
 		users.add(userId, "name", "s3cret");
 		givenPostRequest("/users/1234/prisoners");
-		givenParameter("password", "s3cret");
+		givenAuthentication("name", "s3cret");
 		context.checking(new Expectations() {{
 			allowing(request).getUserId(); will(returnValue(userId));
 			oneOf(response).created("/users/1234/prisoners/3cb54a30");
@@ -95,7 +95,7 @@ public class HangmanRouterTest {
 		users.addPrisoner(userId, new Prisoner("abc123", "word"));
 
 		givenPostRequest("/users/1234/prisoners/abc123");
-		givenParameter("password", "s3cret");
+		givenAuthentication("name", "s3cret");
 		givenParameter("guess", "x");
 
 		context.checking(new Expectations() {{
@@ -115,7 +115,7 @@ public class HangmanRouterTest {
 		users.addPrisoner(userId, new Prisoner("abc123", "word"));
 
 		givenPostRequest("/users/1234/prisoners/abc123");
-		givenParameter("password", "s3cret");
+		givenAuthentication("name", "s3cret");
 		givenNoParameter("guess");
 		context.checking(new Expectations() {{
 			allowing(request).getUserId(); will(returnValue(userId));
@@ -133,12 +133,12 @@ public class HangmanRouterTest {
 		users.addPrisoner(userId, new Prisoner("abc123", "word"));
 
 		givenPostRequest("/users/1234/prisoners/abc123");
-		givenNoParameter("password");
+		givenNoAuthentication();
 		givenParameter("guess", "x");
 		context.checking(new Expectations() {{
 			allowing(request).getUserId(); will(returnValue(userId));
 			allowing(request).getPrisonerId(); will(returnValue("abc123"));
-			oneOf(response).forbidden(with(any(String.class)));
+			oneOf(response).unauthorized(with(any(String.class)));
 		}});
 		router.service(request, response);
 
@@ -170,6 +170,20 @@ public class HangmanRouterTest {
 	private void givenParameter(final String name, final String value) {
 		context.checking(new Expectations() {{
 			allowing(request).getParameter(with(name)); will(returnValue(value));
+		}});
+	}
+	
+	private void givenAuthentication(final String username, final String password) {
+		context.checking(new Expectations() {{
+			allowing(request).getCredentials(); will(returnValue(username + ":" + password));
+			allowing(request).getPassword(); will(returnValue(password));
+		}});
+	}
+	
+	private void givenNoAuthentication() {
+		context.checking(new Expectations() {{
+			allowing(request).getCredentials(); will(returnValue(null));
+			allowing(request).getPassword(); will(returnValue(null));
 		}});
 	}
 

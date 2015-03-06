@@ -18,4 +18,8 @@ public interface WebRequest {
 
 	boolean isPost();
 
+	String getCredentials();
+
+	String getPassword();
+
 }

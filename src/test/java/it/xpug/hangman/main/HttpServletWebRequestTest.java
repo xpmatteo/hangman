@@ -11,13 +11,12 @@ import org.junit.*;
 
 public class HttpServletWebRequestTest {
 
-
 	@Rule
 	public JUnitRuleMockery context = new JUnitRuleMockery();
+	private HttpServletRequest httpServletRequest = context.mock(HttpServletRequest.class);
 
 	@Test
 	public void test() {
-		final HttpServletRequest httpServletRequest = context.mock(HttpServletRequest.class);
 		context.checking(new Expectations() {
 			{
 				allowing(httpServletRequest).getRequestURI();
@@ -26,6 +25,39 @@ public class HttpServletWebRequestTest {
 		});
 		HttpServletWebRequest request = new HttpServletWebRequest(httpServletRequest);
 		assertEquals(new UserId("abc123"), request.getUserId());
+	}
+	
+	@Test
+	public void authenticationParsed() throws Exception {
+		context.checking(new Expectations() {{
+				allowing(httpServletRequest).getHeader("authorization");
+				will(returnValue("Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+		}});
+		HttpServletWebRequest request = new HttpServletWebRequest(httpServletRequest);
+		assertEquals("Aladdin:open sesame", request.getCredentials());		
+		assertEquals("open sesame", request.getPassword());		
+	}
+
+	@Test
+	public void authenticationMissing() throws Exception {
+		context.checking(new Expectations() {{
+				allowing(httpServletRequest).getHeader("authorization");
+				will(returnValue(null));
+		}});
+		HttpServletWebRequest request = new HttpServletWebRequest(httpServletRequest);
+		assertEquals(null, request.getCredentials());
+		assertEquals(null, request.getPassword());
+	}
+
+	@Test
+	public void wrongAuthenticationMethod() throws Exception {
+		context.checking(new Expectations() {{
+				allowing(httpServletRequest).getHeader("authorization");
+				will(returnValue("something else"));
+		}});
+		HttpServletWebRequest request = new HttpServletWebRequest(httpServletRequest);
+		assertEquals(null, request.getCredentials());		
+		assertEquals(null, request.getPassword());		
 	}
 
 }

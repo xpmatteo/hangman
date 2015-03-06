@@ -1,23 +1,39 @@
 package it.xpug.hangman.main;
 
 
-import static org.junit.Assert.*;
-import static org.mortbay.util.ajax.JSON.*;
-import it.xpug.generic.web.*;
-import it.xpug.hangman.domain.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mortbay.util.ajax.JSON.parse;
+import it.xpug.generic.web.ReusableJettyApp;
+import it.xpug.hangman.domain.UserBase;
+import it.xpug.hangman.domain.UserId;
 
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.client.entity.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.message.*;
-import org.junit.*;
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 public class HangmanEnd2EndTest {
@@ -72,9 +88,7 @@ public class HangmanEnd2EndTest {
 	public void seeMyself() throws Exception {
 		givenUser("888", "Pippoz", "s3cr3t");
 
-		params.put("name", "Pippoz");
-		params.put("password", "s3cr3t");
-		get("/users/888");
+		get("/users/888", "Pippoz:s3cr3t");
 
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
@@ -85,13 +99,21 @@ public class HangmanEnd2EndTest {
 				"}\n" +
 				"");
 	}
+	
+	@Test
+	public void encodeBase64() throws Exception {
+		assertEquals("enVnOnpvdA==", encodeBase64("zug:zot"));
+	}
+
+	private Object encodeBase64(String string) throws UnsupportedEncodingException {
+		return DatatypeConverter.printBase64Binary(string.getBytes("US-ASCII"));
+	}
 
 	@Test
 	public void getPrisonersWithNoPrisoners() throws Exception {
 		givenUser("999", "zug", "zot");
 
-		params.put("password", "zot");
-		get("/users/999/prisoners");
+		get("/users/999/prisoners", "zug:zot");
 
 		assertStatus(200);
 		assertMimeType("application/json; charset=UTF-8");
@@ -101,16 +123,29 @@ public class HangmanEnd2EndTest {
 	public void wrongPassword() throws Exception {
 		givenUser("123", "Pippoz", "s3cr3t");
 
-		params.put("name", "Pippoz");
-		params.put("password", "nottherightpassword");
-		get("/users/123");
+		get("/users/123", "Pippoz:nottherightpassword");
 
 		assertStatus(403);
 		assertMimeType("application/json; charset=UTF-8");
 		assertBody("{\n" +
-				" \"description\": \"You don't have the permission to access the requested resource. It is either read-protected or not readable by the server.\",\n" +
+				" \"description\": \"You don't have the permission to access the requested resource.\",\n" +
 				" \"status\": \"Forbidden\",\n" +
 				" \"status_code\": 403\n" +
+				"}");
+	}
+
+	@Test
+	public void noPassword() throws Exception {
+		givenUser("123", "Pippoz", "s3cr3t");
+		get("/users/123");
+
+		assertStatus(401);
+		assertMimeType("application/json; charset=UTF-8");
+		assertHeader("WWW-Authenticate", "Basic realm=\"hangman\"");
+		assertBody("{\n" +
+				" \"description\": \"You don't have the permission to access the requested resource.\",\n" +
+				" \"status\": \"Unauthorized\",\n" +
+				" \"status_code\": 401\n" +
 				"}");
 	}
 
@@ -144,6 +179,13 @@ public class HangmanEnd2EndTest {
 		assertEquals("Status code", expectedStatus, response.getStatusLine().getStatusCode());
 	}
 
+	private void get(String path, String authentication) throws IOException, URISyntaxException {
+		URI url = new URI(baseUrl() + path + queryString());
+		HttpGet request = new HttpGet(url);
+		request.addHeader("Authorization",  "Basic " + encodeBase64(authentication));
+		this.response = makeHttpClient().execute(request);
+	}
+	
 	private void get(String path) throws IOException, URISyntaxException {
 		URI url = new URI(baseUrl() + path + queryString());
 		HttpGet request = new HttpGet(url);
@@ -176,7 +218,7 @@ public class HangmanEnd2EndTest {
 			queryString = "?" + queryString;
 		return queryString;
 	}
-
+	
 	private void addParameters(HttpPost request) throws UnsupportedEncodingException {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		for (String name : params.keySet()) {
